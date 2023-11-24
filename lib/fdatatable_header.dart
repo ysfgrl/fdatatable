@@ -1,38 +1,37 @@
+part of 'fdatatable.dart';
 
-import 'package:fdatatable/fdatatable_notifier.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
-
-class FDataTableHeader<DType extends Object> extends StatelessWidget{
-  const FDataTableHeader({super.key});
+class FDTHeader<DType extends Object> extends StatelessWidget{
+  const FDTHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
 
-    return Consumer<FDataTableNotifier<DType>>(
+    return Consumer<FDTNotifier<DType>>(
       builder: (context, state, child2) {
-
-        return Row(
-          children: [
-            ...state.columns.map((e) {
-              return Expanded(
-                flex: 1,
-                child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Text(e.title,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold
-                      ),
-                      overflow: TextOverflow.ellipsis
-                  ),
-                ),
-              );
-            })
-          ],
-        );
+        return _buildRow(context, state);
       },
     );
 
   }
+
+  Widget _buildRow(BuildContext context, FDTNotifier<DType> state){
+    switch(state.size){
+      case FDTSize.sm: return _expanded(context, state,  2);
+      case FDTSize.md: return _expanded(context, state,  3);
+      case FDTSize.lg: return _expanded(context, state,  4);
+      case FDTSize.xl: return _expanded(context, state,  5);
+      case FDTSize.xxl: return _expanded(context, state, 6);
+    }
+  }
+  Widget _expanded(BuildContext context, FDTNotifier<DType> state, int size){
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(width: 75,),
+        ...state.columns.getRange(0, size).takeWhile((element) => element.visible).map((column) =>
+            Expanded(child: Text(column.title, style: Theme.of(context).textTheme.titleLarge,))),
+    ]
+    );
+  }
+
 }

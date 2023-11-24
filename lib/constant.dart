@@ -1,11 +1,6 @@
+part of 'fdatatable.dart';
 
-import 'package:fdatatable/fdatatable_notifier.dart';
-import 'package:fdatatable/models/faction.dart';
-import 'package:fdatatable/models/faction_response.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
-Widget createAction<DType extends Object>(FDataTableNotifier<DType> state, FAction action){
+Widget createAction<DType extends Object>(FDTNotifier<DType> state, FAction action){
 
   Widget child;
   if(action.icon != null && action.text != null) {
@@ -63,7 +58,7 @@ Widget createAction<DType extends Object>(FDataTableNotifier<DType> state, FActi
               borderRadius: BorderRadius.circular(10)
           )
       ),
-      onPressed: () => state.actionCallBack(FActionResponse(key: action.key)),
+      onPressed: () => state.actionCallBack(FActionResponse<DType>(key: action.key)),
       child: child
   );
 
@@ -72,7 +67,7 @@ Widget createAction<DType extends Object>(FDataTableNotifier<DType> state, FActi
 
 class FDataTableDialog<DType extends Object> extends StatelessWidget {
   final RelativeRect rect;
-  final FDataTableNotifier<DType> state;
+  final FDTNotifier<DType> state;
   final Widget layout;
   const FDataTableDialog({
     required this.rect,

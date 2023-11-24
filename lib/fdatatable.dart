@@ -1,57 +1,86 @@
 library fdatatable;
 
-import 'package:fdatatable/models/faction.dart';
-import 'package:fdatatable/models/fcolumn.dart';
-import 'package:fdatatable/fdatatable_controller.dart';
-import 'package:fdatatable/fdatatable_footer.dart';
-import 'package:fdatatable/fdatatable_header.dart';
-import 'package:fdatatable/fdatatable_notifier.dart';
-import 'package:fdatatable/fdatatable_rows.dart';
-import 'package:fdatatable/fdatatable_title.dart';
-import 'package:fdatatable/ftypes.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:provider/provider.dart';
 
 
-class FDataTable<DType extends Object> extends StatelessWidget {
-  final FDataTableController<DType> controller;
-  final PageRequest<DType> pageRequest;
+
+export 'package:flutter_form_builder/src/fields/form_builder_date_time_picker.dart';
+export 'package:flutter_form_builder/src/form_builder_field_option.dart';
+
+part 'constant.dart';
+part 'ftypes.dart';
+part 'models/f_action.dart';
+part 'models/f_column.dart';
+part 'models/f_filter.dart';
+part 'models/faction_response.dart';
+part 'models/fpage_request.dart';
+part 'models/fpage_response.dart';
+part 'fdatatable_controller.dart';
+part 'fdatatable_notifier.dart';
+part 'fdatatable_rows.dart';
+part 'fdatatable_header.dart';
+part 'fdatatable_title.dart';
+part 'fdatatable_footer.dart';
+part 'fdatatable_form.dart';
+part 'fdatatable_form_notifier.dart';
+
+
+class FDT<DType extends Object> extends StatelessWidget {
+  final FDTController<DType>? controller;
+  final FDTRequest<DType> fdtRequest;
   final FActionCallBack<DType> actionCallBack;
   final FTranslation translation;
 
-  final List<BaseColumn<DType>> columns;
+  final List<FDTBaseColumn<DType,dynamic >> columns;
   final List<FAction> topActions;
-  final List<FAction> bottomActions;
   final List<FAction> rowActions;
   final Text? title;
   final Icon? icon;
-
-  const FDataTable({
+  final List<FDTFilterModel> filters;
+  final FDTItemCreator<DType> itemCreator;
+  final int firstPage;
+  final int pageSize;
+  const FDT({
     super.key,
-    required this.controller,
-    required this.pageRequest,
+    required this.fdtRequest,
     required this.columns,
     required this.actionCallBack,
+    required this.itemCreator,
+    this.controller,
     this.title,
     this.icon,
     this.topActions = const [],
-    this.bottomActions = const [],
     this.rowActions = const [],
-    this.translation = defaultTranslation
+    this.translation = defaultTranslation,
+    this.filters = const [],
+    this.firstPage = 1,
+    this.pageSize = 10
   });
 
   
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<FDataTableNotifier<DType>>(
-      create: (context) => FDataTableNotifier(
+    return ChangeNotifierProvider<FDTNotifier<DType>>(
+      create: (context) => FDTNotifier(
         controller: controller,
-        pageRequest: pageRequest,
+        fdtRequest: fdtRequest,
         actionCallBack: actionCallBack,
         columns: columns,
+        itemCreator: itemCreator,
+        filters: {for (var v in filters) v.key: v},
+        requestModel: FDTRequestModel(
+          page: firstPage,
+          pageSize: pageSize,
+          filters: {for (var v in filters) v.key: v.value}
+        )
       ),
       builder: (context, child) {
-        var state = context.read<FDataTableNotifier<DType>>();
+        var state = context.read<FDTNotifier<DType>>();
         return  Material(
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -60,14 +89,14 @@ class FDataTable<DType extends Object> extends StatelessWidget {
           elevation: 10,
           child: LayoutBuilder(
             builder: (context, constraints) {
-              state.maxWidth = constraints.maxWidth;
+              state.setWidth(constraints.maxWidth);
               return Column(
                 children: [
                   DecoratedBox(
                     decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor.withAlpha(30),
                     ),
-                    child: FDataTableTitle<DType>(
+                    child: FDTTitle<DType>(
                       topActions: topActions,
                       title: title,
                       icon: icon,
@@ -87,8 +116,9 @@ class FDataTable<DType extends Object> extends StatelessWidget {
                         color: Theme.of(context).primaryColor.withAlpha(10),
                     ),
 
-                    child: FDataTableHeader<DType>(),
+                    child: FDTHeader<DType>(),
                   ),
+
                   Divider(height: 1,),
 
                   Expanded(
@@ -96,7 +126,7 @@ class FDataTable<DType extends Object> extends StatelessWidget {
                       decoration: BoxDecoration(
 
                       ),
-                      child: FDataTableRows<DType>(
+                      child: FDTRows<DType>(
                         rowActions: rowActions,
                       ),
                     ),
@@ -106,8 +136,7 @@ class FDataTable<DType extends Object> extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor.withAlpha(30),
                     ),
-                    child: FDataTableFooter<DType>(
-                      bottomActions: bottomActions,
+                    child: FDTFooter<DType>(
                       translation: translation,
                     ),
                   ),
@@ -120,3 +149,4 @@ class FDataTable<DType extends Object> extends StatelessWidget {
     );
   }
 }
+

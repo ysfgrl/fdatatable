@@ -1,11 +1,21 @@
 
 
-import 'package:fdatatable/models/fcolumn.dart';
 
-class FDataTableController<DType extends Object>{
+part of 'fdatatable.dart';
+
+class FDTController<DType extends Object>{
 
 
+  late final FDTNotifier<DType> _state;
 
-  FDataTableController();
+  Future<void> nextPage() => _state.nextPage();
+  Future<void> previousPage() => _state.previousPage();
+  void newItem() => _state.newItem();
+
+
+  void dispose() {
+    _state.dispose();
+  }
+
 
 }
