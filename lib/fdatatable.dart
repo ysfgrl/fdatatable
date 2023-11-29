@@ -1,8 +1,10 @@
 library fdatatable;
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +18,6 @@ part 'constant.dart';
 part 'ftypes.dart';
 part 'models/f_action.dart';
 part 'models/f_column.dart';
-part 'models/f_filter.dart';
 part 'models/faction_response.dart';
 part 'models/fpage_request.dart';
 part 'models/fpage_response.dart';
@@ -28,21 +29,20 @@ part 'fdatatable_title.dart';
 part 'fdatatable_footer.dart';
 part 'fdatatable_form.dart';
 part 'fdatatable_form_notifier.dart';
+part 'fdatatable_filter_notifier.dart';
 
 
 class FDT<DType extends Object> extends StatelessWidget {
   final FDTController<DType>? controller;
   final FDTRequest<DType> fdtRequest;
   final FActionCallBack<DType> actionCallBack;
-  final FTranslation translation;
+  final FDTTranslation translation;
 
   final List<FDTBaseColumn<DType,dynamic >> columns;
   final List<FAction> topActions;
   final List<FAction> rowActions;
   final Text? title;
   final Icon? icon;
-  final List<FDTFilterModel> filters;
-  final FDTItemCreator<DType> itemCreator;
   final int firstPage;
   final int pageSize;
   const FDT({
@@ -50,14 +50,12 @@ class FDT<DType extends Object> extends StatelessWidget {
     required this.fdtRequest,
     required this.columns,
     required this.actionCallBack,
-    required this.itemCreator,
     this.controller,
     this.title,
     this.icon,
     this.topActions = const [],
     this.rowActions = const [],
     this.translation = defaultTranslation,
-    this.filters = const [],
     this.firstPage = 1,
     this.pageSize = 10
   });
@@ -71,13 +69,15 @@ class FDT<DType extends Object> extends StatelessWidget {
         fdtRequest: fdtRequest,
         actionCallBack: actionCallBack,
         columns: columns,
-        itemCreator: itemCreator,
-        filters: {for (var v in filters) v.key: v},
         requestModel: FDTRequestModel(
           page: firstPage,
           pageSize: pageSize,
-          filters: {for (var v in filters) v.key: v.value}
-        )
+          filters: {for (var v in columns.where((value) => value.isFilter)) v.key: null}
+        ),
+        filterState: FDTFilterNotifier<DType>(
+          filters: {for (var v in columns.where((value) => value.isFilter)) v.key: null}
+        ),
+        formState: FDTFormNotifier<DType>()
       ),
       builder: (context, child) {
         var state = context.read<FDTNotifier<DType>>();
@@ -91,6 +91,7 @@ class FDT<DType extends Object> extends StatelessWidget {
             builder: (context, constraints) {
               state.setWidth(constraints.maxWidth);
               return Column(
+                key: state.tableKey,
                 children: [
                   DecoratedBox(
                     decoration: BoxDecoration(
@@ -100,6 +101,7 @@ class FDT<DType extends Object> extends StatelessWidget {
                       topActions: topActions,
                       title: title,
                       icon: icon,
+                      translation: translation,
                     ),
                   ),
                   const Divider(height: 1),
@@ -113,6 +115,7 @@ class FDT<DType extends Object> extends StatelessWidget {
                         //     offset: Offset(0.0, 10.0),
                         //   )
                         // ],
+
                         color: Theme.of(context).primaryColor.withAlpha(10),
                     ),
 
@@ -122,12 +125,17 @@ class FDT<DType extends Object> extends StatelessWidget {
                   Divider(height: 1,),
 
                   Expanded(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
+                    child: Material(
+                      textStyle: const TextStyle(fontSize: 14),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
 
-                      ),
-                      child: FDTRows<DType>(
-                        rowActions: rowActions,
+                        ),
+
+                        child: FDTRows<DType>(
+                          rowActions: rowActions,
+                          translation: translation,
+                        ),
                       ),
                     ),
                   ),

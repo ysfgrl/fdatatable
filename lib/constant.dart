@@ -1,6 +1,6 @@
 part of 'fdatatable.dart';
 
-Widget createAction<DType extends Object>(FDTNotifier<DType> state, FAction action){
+Widget createAction<DType extends Object>(FAction action){
 
   Widget child;
   if(action.icon != null && action.text != null) {
@@ -47,43 +47,74 @@ Widget createAction<DType extends Object>(FDTNotifier<DType> state, FAction acti
   }
   if(action.toolTip != null){
     child = Tooltip(
-      message: "tooltip",
+      message: action.toolTip,
       child: child,
     );
   }
-  return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-          padding: EdgeInsets.all(5),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10)
-          )
-      ),
-      onPressed: () => state.actionCallBack(FActionResponse<DType>(key: action.key)),
-      child: child
-  );
+  return child;
 
 }
 
 
-class FDataTableDialog<DType extends Object> extends StatelessWidget {
-  final RelativeRect rect;
-  final FDTNotifier<DType> state;
+class FDTDialog extends StatelessWidget {
+  final double? width;
+  final double? height;
+  final double? left;
+  final double? right;
+  final double? top;
+  final double? bottom;
   final Widget layout;
-  const FDataTableDialog({
-    required this.rect,
-    required this.state,
-    required this.layout});
+  const FDTDialog({super.key,
+    required this.layout,
+    this.top,
+    this.left,
+    this.right,
+    this.bottom,
+    this.width,
+    this.height,
+  });
 
+  static Future<void> showFTDDialog(BuildContext context, Widget layout) async{
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    var offset = renderBox.localToGlobal(Offset.zero);
+    var size = renderBox.size;
+    // var rect = RelativeRect.fromLTRB(offset.dx , offset.dy , offset.dx, 0);
+
+    await showGeneralDialog(
+        barrierColor: Colors.transparent,
+        transitionBuilder: (context, a1, a2, widget) {
+          return Center(
+            child: FDTDialog(
+              layout: widget,
+              top: offset.dy,
+              left: offset.dx-size.width*(1-a1.value),
+              width: size.width,
+              height: size.height,
+            ),
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500), // DURATION FOR ANIMATION
+        barrierDismissible: false,
+        barrierLabel: '',
+        context: context,
+        pageBuilder: (context, animation1, animation2) {
+          return layout;
+        });
+
+  }
   @override
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.loose,
       children: [
         Positioned(
-            top: rect.top,
-            right: rect.right,
-            left: rect.left,
-            child:  layout
+            top: top,
+            right: right,
+            left: left,
+            bottom: bottom,
+            width: width,
+            height: height,
+            child: layout
         ),
       ],
     );

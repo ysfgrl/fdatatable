@@ -2,7 +2,7 @@ part of 'fdatatable.dart';
 
 class FDTFooter<DType extends Object> extends StatelessWidget{
 
-  final FTranslation translation;
+  final FDTTranslation translation;
   const FDTFooter({super.key,
     required this.translation
   });
@@ -26,21 +26,21 @@ class FDTFooter<DType extends Object> extends StatelessWidget{
 
   Widget _sm(BuildContext context, FDTNotifier state){
     return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+      padding: const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            tooltip: translation("f.previous"),
+            tooltip: translation("fdt.previousPage"),
             splashRadius: 20,
-            icon: Icon(Icons.keyboard_arrow_left_rounded,),
+            icon: const Icon(Icons.keyboard_arrow_left_rounded,),
             onPressed:() => state.previousPage(),
           ),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(translation("f.pageSize")),
+                Text(translation("fdt.pageSize")),
                 const SizedBox(width: 10),
                 ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 70, maxHeight: 30),
@@ -62,15 +62,28 @@ class FDTFooter<DType extends Object> extends StatelessWidget{
                     )
                 ),
                 SizedBox(width: 10,),
-                Text(translation("f.page")),
-                Text(state.responseModel.page.toString() +"/"+ state.responseModel.total.toString()),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text("${translation("fdt.pageNumber")} :"),
+                        Text(state.responseModel.page.toString()),
+                      ],
+                    ),Row(
+                      children: [
+                        Text("${translation("fdt.totalItems")} :"),
+                        Text(state.responseModel.total.toString()),
+                      ],
+                    )
+                  ],
+                ),
               ],
             ),
           ),
           IconButton(
-            tooltip: translation("f.next"),
+            tooltip: translation("fdt.nextPage"),
             splashRadius: 20,
-            icon: Icon(Icons.keyboard_arrow_right_rounded,),
+            icon: const Icon(Icons.keyboard_arrow_right_rounded,),
             onPressed: () => state.nextPage(),
           )
         ],
@@ -84,8 +97,8 @@ class FDTFooter<DType extends Object> extends StatelessWidget{
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text(translation("f.pageSize")),
-          const SizedBox(width: 10),
+          Text(translation("fdt.pageSize")),
+          const SizedBox(width: 5),
           ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 70,),
               child: DropdownButtonFormField<int>(
@@ -98,31 +111,31 @@ class FDTFooter<DType extends Object> extends StatelessWidget{
                 style: const TextStyle(fontSize: 14),
                 onChanged:(value) => state.setPageSize(value!),
                 items: const [
-                  DropdownMenuItem(value: 10,child: Text("10"),),
-                  DropdownMenuItem(value: 20,child: Text("20"),),
+                  DropdownMenuItem(value: 10, child: Text("10"),),
+                  DropdownMenuItem(value: 20, child: Text("20"),),
                   DropdownMenuItem(value: 50,child: Text("50"),),
                   DropdownMenuItem(value: 100,child: Text("100"),),
                 ],
               )
           ),
-          SizedBox(width: 10,),
-          Text(translation("f.page")),
+          const SizedBox(width: 5,),
+          Text("${translation("fdt.pageNumber")} :"),
           Text(state.responseModel.page.toString()),
-          SizedBox(width: 10,),
-          Text(translation("f.total")),
+          const SizedBox(width: 5,),
+          Text("${translation("fdt.totalItems")} :"),
           Text(state.responseModel.total.toString()),
-          SizedBox(width: 5,),
+          const SizedBox(width: 5,),
           IconButton(
-            tooltip: translation("f.previous"),
+            tooltip: translation("fdt.previousPage"),
             splashRadius: 20,
-            icon: Icon(Icons.keyboard_arrow_left_rounded,),
+            icon: const Icon(Icons.keyboard_arrow_left_rounded,),
             onPressed:() => state.previousPage(),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 5),
           IconButton(
             tooltip: translation("f.next"),
             splashRadius: 20,
-            icon: Icon(Icons.keyboard_arrow_right_rounded,),
+            icon: const Icon(Icons.keyboard_arrow_right_rounded,),
             onPressed: () => state.nextPage(),
           )
         ],

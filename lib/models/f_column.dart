@@ -4,13 +4,17 @@ part of '../fdatatable.dart';
 abstract class FDTBaseColumn<DType extends Object, VType>{
   final String title;
   final FDTCellBuild<DType>? cellBuilder;
-  final bool visible;
+
   final String key;
   final InputDecoration? decoration;
   final Setter<DType, VType> setter;
   final Getter<DType, VType> getter;
   final double? columnWidth;
+  final double inputHeight;
+  final bool visible;
   final bool readOnly;
+  final bool isFilter;
+  final bool visibleOnly;
   FDTBaseColumn({
     required this.title,
     required this.key,
@@ -19,10 +23,14 @@ abstract class FDTBaseColumn<DType extends Object, VType>{
     this.cellBuilder,
     this.decoration,
     this.columnWidth,
+    this.inputHeight = 50,
     this.readOnly = false,
-    this.visible = true
+    this.visible = true,
+    this.isFilter = false,
+    this.visibleOnly = false
   });
   Widget formBuild(BuildContext context);
+  Widget filterBuild(BuildContext context);
 }
 
 class FDTTextColumn<DType extends Object> extends FDTBaseColumn<DType, String>{
@@ -40,11 +48,36 @@ class FDTTextColumn<DType extends Object> extends FDTBaseColumn<DType, String>{
     super.readOnly,
     super.decoration,
     super.visible,
+    super.isFilter,
     super.columnWidth,
+    super.inputHeight,
     super.cellBuilder,
-    this.inputType
+    this.inputType,
+    super.visibleOnly,
   });
 
+  @override
+  Widget filterBuild(BuildContext context) {
+
+    return Consumer<FDTFilterNotifier<DType>>(
+      builder: (context, filterState, child) {
+        return FormBuilderTextField(
+          name: key,
+          decoration: decoration ?? InputDecoration(labelText: title),
+          initialValue: filterState.getValue(key),
+          keyboardType: inputType,
+          onChanged: (value) {
+            if(filterState._formKey.currentState!=null){
+              if(filterState._formKey.currentState!.fields[key]!.validate()){
+                //formState.newItem![key] = value!;
+                filterState.setValue(key, value);
+              }
+            }
+          },
+        );
+      },
+    );
+  }
   @override
   Widget formBuild(BuildContext context) {
     return Consumer<FDTFormNotifier<DType>>(
@@ -52,7 +85,7 @@ class FDTTextColumn<DType extends Object> extends FDTBaseColumn<DType, String>{
         return FormBuilderTextField(
           name: key,
           readOnly: readOnly,
-          initialValue: getter(formState.newItem),
+          initialValue: getter(formState.newItem!),
           decoration: decoration ?? InputDecoration(labelText: title),
           keyboardType: inputType,
           autovalidateMode: AutovalidateMode.always,
@@ -65,7 +98,8 @@ class FDTTextColumn<DType extends Object> extends FDTBaseColumn<DType, String>{
           onChanged: (value) {
             if(formState._formKey.currentState!=null){
               if(formState._formKey.currentState!.fields[key]!.validate()){
-                setter(formState.newItem, value!);
+                setter(formState.newItem!, value!);
+                formState.updateValue();
               }
             }
           },
@@ -86,10 +120,13 @@ class FDTIntColumn<DType extends Object> extends FDTBaseColumn<DType, int>{
     super.decoration,
     super.readOnly,
     super.visible,
+    super.isFilter,
     super.columnWidth,
+    super.inputHeight,
     super.cellBuilder,
     required this.min,
-    required this.max
+    required this.max,
+    super.visibleOnly,
   });
 
   @override
@@ -106,12 +143,33 @@ class FDTIntColumn<DType extends Object> extends FDTBaseColumn<DType, int>{
             FormBuilderValidators.max(max),
             FormBuilderValidators.min(min)
           ]),
-          initialValue: getter(formState.newItem).toString(),
+          initialValue: getter(formState.newItem!).toString(),
           decoration: decoration ?? InputDecoration(labelText: title),
           onChanged: (value) {
             if(formState._formKey.currentState!=null){
               if(formState._formKey.currentState!.fields[key]!.validate()){
-                setter(formState.newItem, int.parse(value!));
+                setter(formState.newItem!, int.parse(value!));
+                formState.updateValue();
+              }
+            }
+          },
+        );
+      },
+    );
+  }
+  @override
+  Widget filterBuild(BuildContext context) {
+    return Consumer<FDTFilterNotifier<DType>>(
+      builder: (context, filterState, child) {
+        return FormBuilderTextField(
+          name: key,
+          decoration: decoration ?? InputDecoration(labelText: title),
+          keyboardType: TextInputType.number,
+          initialValue: filterState.getValue(key),
+          onChanged: (value) {
+            if(filterState._formKey.currentState!=null){
+              if(filterState._formKey.currentState!.fields[key]!.validate()){
+                filterState.setValue(key, value);
               }
             }
           },
@@ -134,10 +192,13 @@ class FDTSliderColumn<DType extends Object> extends FDTBaseColumn<DType, double>
     super.readOnly,
     super.decoration,
     super.visible,
+    super.isFilter,
     super.columnWidth,
+    super.inputHeight,
     super.cellBuilder,
     required this.min,
-    required this.max
+    required this.max,
+    super.visibleOnly,
   });
 
   @override
@@ -154,12 +215,35 @@ class FDTSliderColumn<DType extends Object> extends FDTBaseColumn<DType, double>
           ]),
           min: min,
           max: max,
-          initialValue: getter(formState.newItem),
+          initialValue: getter(formState.newItem!) ?? min,
           decoration: decoration ?? InputDecoration(labelText: title),
           onChanged: (value) {
             if(formState._formKey.currentState!=null){
               if(formState._formKey.currentState!.fields[key]!.validate()){
-                setter(formState.newItem, value!);
+                setter(formState.newItem!, value!);
+                formState.updateValue();
+              }
+            }
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget filterBuild(BuildContext context) {
+    return Consumer<FDTFilterNotifier<DType>>(
+      builder: (context, filterState, child) {
+        return FormBuilderSlider(
+          name: key,
+          min: min,
+          max: max,
+          initialValue: filterState.getValue(key) ?? min,
+          decoration: decoration ?? InputDecoration(labelText: title),
+          onChanged: (value) {
+            if(filterState._formKey.currentState!=null){
+              if(filterState._formKey.currentState!.fields[key]!.validate()){
+                filterState.setValue(key, value);
               }
             }
           },
@@ -181,9 +265,12 @@ class FDTCheckboxColumn<DType extends Object> extends FDTBaseColumn<DType, bool>
     super.readOnly,
     super.decoration,
     super.visible,
+    super.isFilter,
     super.columnWidth,
+    super.inputHeight,
     super.cellBuilder,
     required this.required,
+    super.visibleOnly,
   });
 
   @override
@@ -199,12 +286,35 @@ class FDTCheckboxColumn<DType extends Object> extends FDTBaseColumn<DType, bool>
           validator: FormBuilderValidators.compose([
             FormBuilderValidators.required(),
           ]),
-          initialValue: getter(formState.newItem),
+          initialValue: getter(formState.newItem!),
           decoration: decoration ?? InputDecoration(labelText: title),
           onChanged: (value) {
             if(formState._formKey.currentState!=null){
               if(formState._formKey.currentState!.fields[key]!.validate()){
-                setter(formState.newItem, value!);
+                setter(formState.newItem!, value!);
+                formState.updateValue();
+              }
+            }
+          },
+        );
+      },
+    );
+  }
+  @override
+  Widget filterBuild(BuildContext context) {
+    return Consumer<FDTFilterNotifier<DType>>(
+      builder: (context, filterState, child) {
+        return FormBuilderCheckbox(
+          name: key,
+          title: RichText(
+            text: TextSpan(text: title),
+          ),
+          initialValue: filterState.getValue(key),
+          decoration: decoration ?? InputDecoration(labelText: title,contentPadding: EdgeInsets.all(1)),
+          onChanged: (value) {
+            if(filterState._formKey.currentState!=null){
+              if(filterState._formKey.currentState!.fields[key]!.validate()){
+                filterState.setValue(key, value);
               }
             }
           },
@@ -228,11 +338,14 @@ class FDTLargeTextColumn<DType extends Object> extends FDTBaseColumn<DType, Stri
     super.decoration,
     super.readOnly,
     super.visible,
+    super.isFilter,
     super.columnWidth,
+    super.inputHeight,
     super.cellBuilder,
     required this.minLines,
     required this.maxLines,
-    required this.maxLength
+    required this.maxLength,
+    super.visibleOnly,
   });
 
   @override
@@ -244,7 +357,7 @@ class FDTLargeTextColumn<DType extends Object> extends FDTBaseColumn<DType, Stri
           minLines: minLines,
           maxLines: maxLines,
           maxLength: maxLength,
-          initialValue: getter(formState.newItem),
+          initialValue: getter(formState.newItem!),
           autovalidateMode: AutovalidateMode.always,
           validator: FormBuilderValidators.compose([
             FormBuilderValidators.required(),
@@ -255,7 +368,31 @@ class FDTLargeTextColumn<DType extends Object> extends FDTBaseColumn<DType, Stri
           onChanged: (value) {
             if(formState._formKey.currentState!=null){
               if(formState._formKey.currentState!.fields[key]!.validate()){
-                setter(formState.newItem, value!);
+                setter(formState.newItem!, value!);
+                formState.updateValue();
+              }
+            }
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget filterBuild(BuildContext context) {
+    return Consumer<FDTFilterNotifier<DType>>(
+      builder: (context, filterState, child) {
+        return FormBuilderTextField(
+          name: key,
+          minLines: minLines,
+          maxLines: maxLines,
+          maxLength: maxLength,
+          initialValue: filterState.getValue(key),
+          decoration: decoration ?? InputDecoration(labelText: title),
+          onChanged: (value) {
+            if(filterState._formKey.currentState!=null){
+              if(filterState._formKey.currentState!.fields[key]!.validate()){
+                filterState.setValue(key, value);
               }
             }
           },
@@ -277,9 +414,12 @@ class FDTDropDownColumn<DType extends Object, VType> extends FDTBaseColumn<DType
     super.decoration,
     super.readOnly,
     super.visible,
+    super.isFilter,
     super.columnWidth,
+    super.inputHeight,
     super.cellBuilder,
     required this.items,
+    super.visibleOnly,
   });
 
   @override
@@ -289,13 +429,34 @@ class FDTDropDownColumn<DType extends Object, VType> extends FDTBaseColumn<DType
         return FormBuilderDropdown<VType>(
           name: key,
           items: items,
-          initialValue: getter(formState.newItem),
+          initialValue: getter(formState.newItem!),
           validator: FormBuilderValidators.compose([FormBuilderValidators.required()]),
           decoration: decoration ?? InputDecoration(labelText: title),
           onChanged: (value) {
             if(formState._formKey.currentState!=null){
               if(formState._formKey.currentState!.fields[key]!.validate()){
-                setter(formState.newItem, value!);
+                setter(formState.newItem!, value!);
+                formState.updateValue();
+              }
+            }
+          },
+        );
+      },
+    );
+  }
+  @override
+  Widget filterBuild(BuildContext context) {
+    return Consumer<FDTFilterNotifier<DType>>(
+      builder: (context, filterState, child) {
+        return FormBuilderDropdown<VType>(
+          name: key,
+          items: items,
+          initialValue: filterState.getValue(key),
+          decoration: decoration ?? InputDecoration(labelText: title),
+          onChanged: (value) {
+            if(filterState._formKey.currentState!=null){
+              if(filterState._formKey.currentState!.fields[key]!.validate()){
+                filterState.setValue(key, value);
               }
             }
           },
@@ -317,9 +478,11 @@ class FDTRadioGroupColumn<DType extends Object, VType> extends FDTBaseColumn<DTy
     super.decoration,
     super.readOnly,
     super.visible,
+    super.isFilter,
     super.columnWidth,
     super.cellBuilder,
     required this.items,
+    super.visibleOnly,
   });
 
   @override
@@ -329,17 +492,39 @@ class FDTRadioGroupColumn<DType extends Object, VType> extends FDTBaseColumn<DTy
         return FormBuilderRadioGroup<VType>(
           name: key,
           options: items,
-          initialValue: getter(formState.newItem),
+          initialValue: getter(formState.newItem!),
           validator: FormBuilderValidators.compose([FormBuilderValidators.required()]),
           decoration: decoration ?? InputDecoration(labelText: title),
           onChanged: (value) {
             if(formState._formKey.currentState!=null){
               if(formState._formKey.currentState!.fields[key]!.validate()){
-                setter(formState.newItem, value!);
+                setter(formState.newItem!, value!);
+                formState.updateValue();
               }
             }
           },
           controlAffinity: ControlAffinity.trailing,
+        );
+      },
+    );
+  }
+
+  @override
+  Widget filterBuild(BuildContext context) {
+    return Consumer<FDTFilterNotifier<DType>>(
+      builder: (context, filterState, child) {
+        return FormBuilderRadioGroup<VType>(
+          name: key,
+          options: items,
+          initialValue: filterState.getValue(key),
+          decoration: decoration ?? InputDecoration(labelText: title),
+          onChanged: (value) {
+            if(filterState._formKey.currentState!=null){
+              if(filterState._formKey.currentState!.fields[key]!.validate()){
+                filterState.setValue(key, value);
+              }
+            }
+          },
         );
       },
     );
@@ -358,8 +543,10 @@ class FDTDateColumn<DType extends Object> extends FDTBaseColumn<DType, DateTime>
     super.decoration,
     super.readOnly,
     super.visible,
+    super.isFilter,
     super.columnWidth,
     super.cellBuilder,
+    super.visibleOnly,
     this.inputType  = InputType.date,
   });
 
@@ -369,7 +556,7 @@ class FDTDateColumn<DType extends Object> extends FDTBaseColumn<DType, DateTime>
       builder: (context, formState, child) {
         return FormBuilderDateTimePicker(
           name: key,
-          initialValue: getter(formState.newItem),
+          initialValue: getter(formState.newItem!),
           validator: FormBuilderValidators.compose([
             FormBuilderValidators.required(),
           ]),
@@ -381,7 +568,33 @@ class FDTDateColumn<DType extends Object> extends FDTBaseColumn<DType, DateTime>
           onChanged: (value) {
             if(formState._formKey.currentState!=null){
               if(formState._formKey.currentState!.fields[key]!.validate()){
-                setter(formState.newItem, value!);
+                setter(formState.newItem!, value!);
+                formState.updateValue();
+              }
+            }
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget filterBuild(BuildContext context) {
+    return Consumer<FDTFilterNotifier<DType>>(
+      builder: (context, filterState, child) {
+        return FormBuilderDateTimePicker(
+          name: key,
+          initialValue: filterState.getValue(key),
+          inputType: inputType,
+          decoration: decoration ?? InputDecoration(
+              labelText: title,
+              suffixIcon: inputType == InputType.date ? Icon(Icons.date_range): Icon(Icons.timelapse_outlined)
+          ),
+          onChanged: (value) {
+            if(filterState._formKey.currentState!=null){
+              if(filterState._formKey.currentState!.fields[key]!.validate()){
+                filterState.setValue(key, value);
+
               }
             }
           },
@@ -390,3 +603,5 @@ class FDTDateColumn<DType extends Object> extends FDTBaseColumn<DType, DateTime>
     );
   }
 }
+
+// TODO daterange, Sliderrange, password, json, file
