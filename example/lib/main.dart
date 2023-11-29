@@ -243,6 +243,7 @@ class _MyAppState extends State<MyApp> {
                   }
                 },
                 topActions: [
+
                   FAction(text: Text("New"), toolTip: "Add", key: "add",
                       icon: Icon(Icons.plus_one_outlined, size: 20, color: Colors.blue,)),
                   FAction(text: Text("Refresh"), key: "refresh", icon: Icon(Icons.refresh_outlined, size: 20,)),
