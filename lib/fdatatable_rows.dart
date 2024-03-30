@@ -3,10 +3,12 @@ part of 'fdatatable.dart';
 
 class FDTRows<DType extends Object> extends StatelessWidget{
   final List<FAction> rowActions;
+  final FDTRowLoading? rowLoading;
   final FDTTranslation translation;
   const FDTRows({super.key,
     required this.rowActions,
     required this.translation,
+    this.rowLoading,
   });
 
   @override
@@ -67,17 +69,10 @@ class FDTRows<DType extends Object> extends StatelessWidget{
         ),
     );
   }
+
   Widget _buildRow(FDTNotifier<DType> state, int index, int size){
       return ExpansionTile(
-        leading: Container(
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.blue, width: 2)),
-            child: CircleAvatar(
-              radius: 15,
-              child: Text(((index+1) + ((state.responseModel.page-1)*state.responseModel.pageSize)).toString()),
-            )
-        ),
+        leading: rowLoading != null ? rowLoading!((index+1) + ((state.responseModel.page-1)*state.responseModel.pageSize)) : null,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -103,7 +98,7 @@ class FDTRows<DType extends Object> extends StatelessWidget{
         children: [
           Divider(height: 1,),
           SizedBox(height: 5,),
-          ...state.columns.getRange(size, state.columns.length).where((element) => element.visible).map((e) => ListTile(
+          ...state.columns.where((element) => element.visible).map((e) => ListTile(
             leading: Text(e.title, style: TextStyle(fontWeight: FontWeight.bold),),
             minLeadingWidth: 100,
             title: e.cellBuilder != null
@@ -124,7 +119,7 @@ class FDTRows<DType extends Object> extends StatelessWidget{
                             borderRadius: BorderRadius.circular(10)
                         )
                     ),
-                    onPressed: () => state.actionCallBack(FActionResponse<DType>(key: e.key, index: index)),
+                    onPressed: () => state.actionCallBack(FActionResponse<DType>(action: e.action, index: index)),
                     child: createAction(e)
                 ),
               ))

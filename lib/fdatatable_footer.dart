@@ -107,7 +107,7 @@ class FDTFooter<DType extends Object> extends StatelessWidget{
                     isCollapsed: true,
                     contentPadding: EdgeInsets.symmetric(
                         horizontal: 6, vertical: 8),
-                    border: OutlineInputBorder()),
+                    ),
                 style: const TextStyle(fontSize: 14),
                 onChanged:(value) => state.setPageSize(value!),
                 items: const [

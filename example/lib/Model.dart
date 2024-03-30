@@ -1,5 +1,5 @@
 
-class UserModel{
+class Model{
   String id;
   String firstName;
   String lastName;
@@ -11,7 +11,7 @@ class UserModel{
   String detail;
   bool isActive;
 
-  UserModel({
+  Model({
     required this.id,
     required this.firstName,
     required this.lastName,

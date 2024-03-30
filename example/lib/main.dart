@@ -1,5 +1,5 @@
 
-import 'package:fdatatable_example/UserModel.dart';
+import 'package:fdatatable_example/Model.dart';
 import 'package:flutter/material.dart';
 import 'package:fdatatable/fdatatable.dart';
 void main() {
@@ -15,14 +15,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late FDTController<UserModel> dataTableController;
-  late List<FDTBaseColumn<UserModel, dynamic>> columns;
+  late FDTController<Model> dataTableController;
+  late List<FDTBaseColumn<Model, dynamic>> columns;
   @override
   void initState() {
     super.initState();
     dataTableController = FDTController();
     columns = [
-      FDTTextColumn<UserModel>(
+      FDTTextColumn<Model>(
           key: "firstName",
           title: "Name",
           getter: (item) => item.firstName,
@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
           visible: true,
           columnWidth: 75,
       ),
-      FDTTextColumn<UserModel>(
+      FDTTextColumn<Model>(
           key: "lastName",
           title: "Last Name",
           getter: (item) => item.lastName,
@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
           visible: true,
           columnWidth: 100,
       ),
-      FDTTextColumn<UserModel>(
+      FDTTextColumn<Model>(
         key: "email",
         title: "E-mail",
         inputType: TextInputType.emailAddress,
@@ -57,11 +57,14 @@ class _MyAppState extends State<MyApp> {
           item.email = value;
           return true;
         },
+        cellBuilder: (item) {
+          return Text("full name");
+        },
         max: 50,
         min: 5,
         visible: true,
       ),
-      FDTDateColumn<UserModel>(
+      FDTDateColumn<Model>(
           key: "birthDate",
           title: "Date",
           inputType: InputType.date,
@@ -73,7 +76,7 @@ class _MyAppState extends State<MyApp> {
           visible: true,
           columnWidth: 250,
       ),
-      FDTLargeTextColumn<UserModel>(
+      FDTLargeTextColumn<Model>(
           key: "fullName",
           title: "Full Name",
           getter: (item) => item.firstName + item.lastName,
@@ -85,7 +88,7 @@ class _MyAppState extends State<MyApp> {
           maxLength: 500,
           visible: true
       ),
-      FDTCheckboxColumn<UserModel>(
+      FDTCheckboxColumn<Model>(
           key: "isActive",
           title: "Active",
           getter: (item) => item.isActive,
@@ -103,7 +106,7 @@ class _MyAppState extends State<MyApp> {
           required: true,
           columnWidth: 100,
       ),
-      FDTIntColumn<UserModel>(
+      FDTIntColumn<Model>(
           key: "age",
           title: "Age",
           getter: (item) => item.age,
@@ -115,7 +118,7 @@ class _MyAppState extends State<MyApp> {
           max: 50,
           columnWidth: 50,
       ),
-      FDTDropDownColumn<UserModel, String>(
+      FDTDropDownColumn<Model, String>(
           items: const [
             DropdownMenuItem<String>(
               value: "Male",
@@ -134,7 +137,7 @@ class _MyAppState extends State<MyApp> {
             return true;
           },
       ),
-      FDTRadioGroupColumn<UserModel, int>(
+      FDTRadioGroupColumn<Model, int>(
           items: const [
             FormBuilderFieldOption<int>(
               value: 1,
@@ -158,7 +161,7 @@ class _MyAppState extends State<MyApp> {
             return true;
           },
       ),
-      FDTLargeTextColumn<UserModel>(
+      FDTLargeTextColumn<Model>(
           key: "detail",
           title: "Detail",
           getter: (item) => item.detail,
@@ -172,57 +175,48 @@ class _MyAppState extends State<MyApp> {
       ),
     ];
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      themeMode: ThemeMode.light,
+      darkTheme: ThemeData.dark(),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('FDataTable example app'),
         ),
         body: Container(
-          color: Colors.white,
           child: Padding(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(2),
             child: Center(
-              child: FDT<UserModel>(
+              child: FDT<Model>(
+                title: Text("User list Table"),
                 fdtRequest: (requestModel) async {
                   await Future.delayed(Duration(seconds: 2));
-                  print("first request");
+                  print("request");
                   print(requestModel.filters);
                   return FDTResponseModel(
                       page: requestModel.page,
                       pageSize: requestModel.pageSize,
                       total: 100,
-                      list: _exapleModels(requestModel.pageSize)
+                      list: _exampleModels(requestModel.pageSize)
                   );
                 },
                 controller: dataTableController,
                 columns: columns,
                 actionCallBack: (action) {
-                  switch(action.key){
-                    case "delete":
+                  switch(action.action){
+                    case FDTActionTypes.remove:
+                    case FDTActionTypes.delete:
                       dataTableController.removeAt(action.index);
-                    case "refresh":
+                    case FDTActionTypes.refresh:
                       dataTableController.refreshPage();
-                    case "edit":
+                    case FDTActionTypes.edit:
                       dataTableController.editItem(action.index!);
-                    case "toPage":
+                    case FDTActionTypes.toPage:
                       dataTableController.toPage(10);
-                    case "addTest":
-                      dataTableController.addItem(UserModel(
-                          firstName: "Test Name",
-                          lastName: "Test surname surname sefasef sur",
-                          email: "test email",
-                          age: 1,
-                          isActive: false,
-                          gender: "Male",
-                          id: "testid",
-                          birthDate: DateTime.now(),
-                          detail: "test detail",
-                          userType: 2
-                      ));
-                    case "add":
-                      dataTableController.newItem(UserModel(
+                    case FDTActionTypes.add:
+                      dataTableController.newItem(Model(
                           firstName: "",
                           lastName: "",
                           email: "",
@@ -234,28 +228,38 @@ class _MyAppState extends State<MyApp> {
                           detail: "",
                           userType: 2
                       ));
-                    case "formSave":
+                    case FDTActionTypes.save:
                       print(action.item!.firstName);
                       print(action.item!.lastName);
                       print(action.item!.email);
                       print(action.item!.gender);
                       print(action.item!.birthDate);
+
+                    case FDTActionTypes.newForm:
+                    case FDTActionTypes.next:
+                    case FDTActionTypes.previous:
+                    case FDTActionTypes.info:
+                    case FDTActionTypes.detail:
+                    case FDTActionTypes.userAction:
+                    case FDTActionTypes.userAction2:
+                      print("not found action");
                   }
+                },
+                fdtRowLoading: (rowIndex) {
+                  return Text(rowIndex.toString()+"-)");
                 },
                 topActions: [
 
-                  FAction(text: Text("New"), toolTip: "Add", key: "add",
-                      icon: Icon(Icons.plus_one_outlined, size: 20, color: Colors.blue,)),
-                  FAction(text: Text("Refresh"), key: "refresh", icon: Icon(Icons.refresh_outlined, size: 20,)),
-                  FAction(text: Text("To Page 10"), key: "toPage", icon: Icon(Icons.arrow_circle_right_outlined, size: 20,)),
-                  FAction(text: Text("Add Test"), key: "addTest", icon: Icon(Icons.add, size: 20,)),
+                  FAction(text: Text("New"), toolTip: "Add", action: FDTActionTypes.add, icon: Icon(Icons.plus_one_outlined, size: 20, color: Colors.blue,)),
+                  FAction(text: Text("Refresh"), action: FDTActionTypes.refresh, icon: Icon(Icons.refresh_outlined, size: 20,)),
+                  FAction(text: Text("To Page 10"), action: FDTActionTypes.toPage, icon: Icon(Icons.arrow_circle_right_outlined, size: 20,)),
                 ],
                 rowActions: [
-                  FAction(toolTip: "Edit", key: "edit", icon: Icon(Icons.edit, size: 20,)),
-                  FAction(toolTip: "Delete", key: "delete",
+                  FAction(toolTip: "Edit", action: FDTActionTypes.edit, icon: Icon(Icons.edit, size: 20,)),
+                  FAction(toolTip: "Delete", action: FDTActionTypes.delete,
                       icon: Icon(Icons.delete_forever, color: Colors.red, size: 20,)
                   ),
-                  FAction(toolTip: "İnfo", key: "info",
+                  FAction(toolTip: "İnfo", action: FDTActionTypes.info,
                       icon: Icon(Icons.info, color: Colors.red, size: 20,)
                   )
                 ],
@@ -267,9 +271,9 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  List<UserModel> _exapleModels(int count){
-    return List<UserModel>.generate(count, (index) {
-      return UserModel(
+  List<Model> _exampleModels(int count){
+    return List<Model>.generate(count, (index) {
+      return Model(
           id: "id" + index.toString(),
           firstName: "name"+index.toString(),
           lastName: "surname"+index.toString(),

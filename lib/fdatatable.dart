@@ -35,6 +35,7 @@ part 'fdatatable_filter_notifier.dart';
 class FDT<DType extends Object> extends StatelessWidget {
   final FDTController<DType>? controller;
   final FDTRequest<DType> fdtRequest;
+  final FDTRowLoading? fdtRowLoading;
   final FActionCallBack<DType> actionCallBack;
   final FDTTranslation translation;
 
@@ -51,6 +52,7 @@ class FDT<DType extends Object> extends StatelessWidget {
     required this.columns,
     required this.actionCallBack,
     this.controller,
+    this.fdtRowLoading,
     this.title,
     this.icon,
     this.topActions = const [],
@@ -104,29 +106,28 @@ class FDT<DType extends Object> extends StatelessWidget {
                       translation: translation,
                     ),
                   ),
-                  const Divider(height: 1),
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-
-                        // boxShadow: const <BoxShadow>[
-                        //   BoxShadow(
-                        //     blurRadius: 10.0,
-                        //     spreadRadius: -10.0,
-                        //     offset: Offset(0.0, 10.0),
-                        //   )
-                        // ],
-
-                        color: Theme.of(context).primaryColor.withAlpha(10),
-                    ),
-
-                    child: FDTHeader<DType>(),
-                  ),
+                  // const Divider(height: 1),
+                  // DecoratedBox(
+                  //   decoration: BoxDecoration(
+                  //
+                  //       // boxShadow: const <BoxShadow>[
+                  //       //   BoxShadow(
+                  //       //     blurRadius: 10.0,
+                  //       //     spreadRadius: -10.0,
+                  //       //     offset: Offset(0.0, 10.0),
+                  //       //   )
+                  //       // ],
+                  //
+                  //       color: Theme.of(context).primaryColor.withAlpha(10),
+                  //   ),
+                  //
+                  //   child: FDTHeader<DType>(),
+                  // ),
 
                   Divider(height: 1,),
 
                   Expanded(
                     child: Material(
-                      textStyle: const TextStyle(fontSize: 14),
                       child: DecoratedBox(
                         decoration: BoxDecoration(
 
@@ -135,6 +136,7 @@ class FDT<DType extends Object> extends StatelessWidget {
                         child: FDTRows<DType>(
                           rowActions: rowActions,
                           translation: translation,
+                          rowLoading: fdtRowLoading,
                         ),
                       ),
                     ),

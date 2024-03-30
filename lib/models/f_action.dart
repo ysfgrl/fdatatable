@@ -9,17 +9,18 @@ enum FActionAxis{
 }
 
 class FAction{
+  final FDTActionTypes action;
   final Text? text;
   final Icon? icon;
-  final String key;
   final FActionAxis axis;
   final String? toolTip;
   FAction({
     this.text,
-    required this.key,
+    required this.action,
     this.icon,
     this.toolTip,
     this.axis = FActionAxis.leftToRight
   });
-
 }
+
+

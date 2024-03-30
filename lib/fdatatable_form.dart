@@ -109,7 +109,7 @@ class FDTForm<DType extends Object> extends StatelessWidget{
                             if(formState._formKey.currentState!=null){
                               if(formState._formKey.currentState!.validate()){
                                 tableState.actionCallBack(FActionResponse<DType>(
-                                    key: "formSave",
+                                    action: FDTActionTypes.save,
                                     item: formState.newItem
                                 ));
                                 return;

@@ -37,7 +37,7 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
 
   Widget _titleWidget(BuildContext context, FDTNotifier<DType> state){
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.only(left: 10),
       child: Row(
         children: [
           Row(
@@ -167,7 +167,7 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
           children: topActions.map((action) => IconButton(
               tooltip: action.toolTip,
               splashRadius: 30,
-              onPressed: () => tableState.actionCallBack(FActionResponse<DType>(key: action.key)),
+              onPressed: () => tableState.actionCallBack(FActionResponse<DType>(action: action.action)),
               icon: action.icon!
           )).toList(),
         );
@@ -186,7 +186,7 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
                         borderRadius: BorderRadius.circular(10)
                     )
                 ),
-                onPressed: () => tableState.actionCallBack(FActionResponse<DType>(key: action.key)),
+                onPressed: () => tableState.actionCallBack(FActionResponse<DType>(action: action.action)),
                 child: createAction(action)
             ),
           )).toList(),
@@ -202,7 +202,7 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
               )
           ),
           splashRadius: 20,
-          onPressed: () => tableState.actionCallBack(FActionResponse<DType>(key: action.key)),
+          onPressed: () => tableState.actionCallBack(FActionResponse<DType>(action: action.action)),
           icon: createAction(action)
       )).toList(),
     );
@@ -215,7 +215,7 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
                   borderRadius: BorderRadius.circular(10)
               )
           ),
-          onPressed: () => tableState.actionCallBack(FActionResponse<DType>(key: action.key)),
+          onPressed: () => tableState.actionCallBack(FActionResponse<DType>(action: action.action)),
           child: createAction(action)
       )).toList(),
     );

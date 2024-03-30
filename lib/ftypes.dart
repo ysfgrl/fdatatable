@@ -3,8 +3,10 @@
 part of 'fdatatable.dart';
 
 typedef FDTRequest<DType extends Object> = FutureOr<FDTResponseModel<DType>> Function(FDTRequestModel requestModel);
+
 typedef FActionCallBack<DType extends Object> = void Function(FActionResponse<DType> action);
 typedef FDTTranslation = String Function(String key);
+typedef FDTRowLoading = Widget Function(int rowIndex);
 
 typedef FDTItemCreator<DType extends Object> = DType Function();
 
@@ -50,4 +52,21 @@ enum FDTSize{
   lg,
   xl,
   xxl
+}
+
+enum FDTActionTypes{
+  delete,
+  remove,
+  add,
+  edit,
+  refresh,
+  newForm,
+  next,
+  previous,
+  toPage,
+  info,
+  detail,
+  save,
+  userAction,
+  userAction2,
 }

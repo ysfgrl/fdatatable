@@ -43,8 +43,8 @@ class FDTTextColumn<DType extends Object> extends FDTBaseColumn<DType, String>{
     required super.key,
     required super.getter,
     required super.setter,
-    required this.min,
-    required this.max,
+    this.min=0,
+    this.max=50,
     super.readOnly,
     super.decoration,
     super.visible,
@@ -66,6 +66,82 @@ class FDTTextColumn<DType extends Object> extends FDTBaseColumn<DType, String>{
           decoration: decoration ?? InputDecoration(labelText: title),
           initialValue: filterState.getValue(key),
           keyboardType: inputType,
+          onChanged: (value) {
+            if(filterState._formKey.currentState!=null){
+              if(filterState._formKey.currentState!.fields[key]!.validate()){
+                //formState.newItem![key] = value!;
+                filterState.setValue(key, value);
+              }
+            }
+          },
+        );
+      },
+    );
+  }
+  @override
+  Widget formBuild(BuildContext context) {
+    return Consumer<FDTFormNotifier<DType>>(
+      builder: (context, formState, child) {
+        return FormBuilderTextField(
+          name: key,
+          readOnly: readOnly,
+          initialValue: getter(formState.newItem!),
+          decoration: decoration ?? InputDecoration(labelText: title),
+          keyboardType: inputType,
+          autovalidateMode: AutovalidateMode.always,
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            FormBuilderValidators.maxLength(max),
+            FormBuilderValidators.minLength(min),
+            if(inputType == TextInputType.emailAddress) FormBuilderValidators.email(),
+          ]),
+          onChanged: (value) {
+            if(formState._formKey.currentState!=null){
+              if(formState._formKey.currentState!.fields[key]!.validate()){
+                setter(formState.newItem!, value!);
+                formState.updateValue();
+              }
+            }
+          },
+        );
+      },
+    );
+  }
+}
+
+class FDTPasswordColumn<DType extends Object> extends FDTBaseColumn<DType, String>{
+
+  final int min;
+  final int max;
+  final TextInputType? inputType;
+  FDTPasswordColumn({
+    required super.title,
+    required super.key,
+    required super.getter,
+    required super.setter,
+    this.min=0,
+    this.max=50,
+    super.readOnly,
+    super.decoration,
+    super.visible,
+    super.isFilter,
+    super.columnWidth,
+    super.inputHeight,
+    super.cellBuilder,
+    this.inputType,
+    super.visibleOnly,
+  });
+
+  @override
+  Widget filterBuild(BuildContext context) {
+    return Consumer<FDTFilterNotifier<DType>>(
+      builder: (context, filterState, child) {
+        return FormBuilderTextField(
+          name: key,
+          decoration: decoration ?? InputDecoration(labelText: title),
+          initialValue: filterState.getValue(key),
+          keyboardType: inputType,
+          obscureText: true,
           onChanged: (value) {
             if(filterState._formKey.currentState!=null){
               if(filterState._formKey.currentState!.fields[key]!.validate()){
@@ -604,4 +680,6 @@ class FDTDateColumn<DType extends Object> extends FDTBaseColumn<DType, DateTime>
   }
 }
 
-// TODO daterange, Sliderrange, password, json, file
+
+
+// TODO daterange, Sliderrange, json, file
