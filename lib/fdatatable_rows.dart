@@ -119,7 +119,7 @@ class FDTRows<DType extends Object> extends StatelessWidget{
                             borderRadius: BorderRadius.circular(10)
                         )
                     ),
-                    onPressed: () => state.actionCallBack(FActionResponse<DType>(action: e.action, index: index)),
+                    onPressed: () => state.actionCallBack(FActionResponse<DType>(action: e.action, index: index, item: state.responseModel.list[index])),
                     child: createAction(e)
                 ),
               ))
