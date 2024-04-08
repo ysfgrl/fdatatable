@@ -13,5 +13,5 @@ class FDTResponseModel<DType extends Object>{
     this.total=0,
   });
 
-  FDTResponseModel.Empty(): list = [], page = 0, pageSize =10, total=0;
+  FDTResponseModel.empty(): list = [], page = 0, pageSize =10, total=0;
 }

@@ -11,10 +11,8 @@ class FDTNotifier<DType extends Object> extends ChangeNotifier{
   final FDTRequest<DType> fdtRequest;
   final FDTRequestModel requestModel;
   final FActionCallBack<DType> actionCallBack;
-  FDTResponseModel<DType> responseModel = FDTResponseModel.Empty();
+  FDTResponseModel<DType> responseModel = FDTResponseModel.empty();
   FDTState state = FDTState.loading;
-  Object? _error;
-  // FDTFilterNotifier filterState;
   FDTNotifier({
     required this.fdtRequest,
     required this.columns,
@@ -111,7 +109,6 @@ class FDTNotifier<DType extends Object> extends ChangeNotifier{
   Future<void> _getPage() async{
     state = FDTState.loading;
     notifyListeners();
-    _error = null;
     try{
       responseModel = await fdtRequest(requestModel);
       state = FDTState.building;
@@ -119,7 +116,6 @@ class FDTNotifier<DType extends Object> extends ChangeNotifier{
     }  catch (err, stack) {
       debugPrint(stack.toString());
       state = FDTState.error;
-      _error = err;
       notifyListeners();
     }
   }

@@ -118,7 +118,7 @@ class _FDTRowState<DType extends Object> extends State<FDTRow<DType>> with Ticke
           ...widget.tableState.columns.map((e) => ListTile(
             leading: Text(e.title, style: TextStyle(fontWeight: FontWeight.bold),),
             minLeadingWidth: 100,
-            title: e.cellBuilder!(widget.tableState.responseModel.list[widget.index]),
+            title: e.cellBuilder(widget.tableState.responseModel.list[widget.index]),
           )),
         ],
       ),

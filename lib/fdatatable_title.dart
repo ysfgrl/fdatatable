@@ -161,7 +161,7 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
         return Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: topActions.map((action) => Padding(
-            padding: EdgeInsets.only(left: 5, right: 5),
+            padding: const EdgeInsets.only(left: 5, right: 5),
             child:  IconButton(
                 onPressed: () => tableState.actionCallBack(FActionResponse<DType>(action: action.action)),
                 icon: action.icon,

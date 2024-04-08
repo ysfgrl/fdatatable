@@ -98,7 +98,7 @@ class FDT<DType extends Object> extends StatelessWidget {
                   Divider(height: 1, color: Theme.of(context).dividerColor,),
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.all(1),
+                      padding: const EdgeInsets.all(1),
                       child: FDTRows<DType>(
                         rowActions: rowActions,
                         translation: translation,
