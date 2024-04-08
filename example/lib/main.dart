@@ -205,7 +205,6 @@ class _MyAppState extends State<MyApp> {
             padding: EdgeInsets.all(20),
             child: Center(
               child: FDT<Model>(
-
                 title: Text("User list Table"),
                 fdtRequest: (requestModel) async {
                   await Future.delayed(Duration(seconds: 2));

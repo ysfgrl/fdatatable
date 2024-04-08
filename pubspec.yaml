@@ -1,7 +1,8 @@
 name: fdatatable
-description: A new Flutter project.
+description: a Flutter Datatable plugin.
 version: 0.0.1
-homepage:
+homepage: https://github.com/ysfgrl/fdatatable.git
+repository: https://github.com/ysfgrl/fdatatable.git
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -14,7 +15,6 @@ dependencies:
     sdk: flutter
   provider: any
   date_field: ^5.0.1
-  expansion_tile_group: ^1.2.4
 
 dev_dependencies:
   flutter_test:

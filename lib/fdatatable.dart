@@ -3,7 +3,6 @@ library fdatatable;
 import 'dart:async';
 
 import 'package:date_field/date_field.dart';
-import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
