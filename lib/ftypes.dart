@@ -6,7 +6,7 @@ typedef FDTRequest<DType extends Object> = FutureOr<FDTResponseModel<DType>> Fun
 
 typedef FActionCallBack<DType extends Object> = void Function(FActionResponse<DType> action);
 typedef FDTTranslation = String Function(String key);
-typedef FDTRowLoading = Widget Function(int rowIndex);
+typedef FDTRowLoading<DType extends Object> = Widget Function(DType item, int rowIndex);
 
 typedef FDTItemCreator<DType extends Object> = DType Function();
 
@@ -14,6 +14,17 @@ typedef FDTCellBuild<DType extends Object> = Widget Function(DType item);
 
 typedef Getter<DType extends Object, VType> = VType Function(DType item);
 typedef Setter<DType extends Object, VType> = FutureOr<bool> Function(DType item, VType value);
+
+typedef FDTDateToStr = String Function(DateTime dateTime);
+typedef FDTStrToDate = DateTime Function(String dateStr);
+
+String dateToStrConst(DateTime dateTime){
+  return dateTime.toIso8601String();
+}
+
+DateTime strToDateConst(String strDate){
+  return DateTime.parse(strDate);
+}
 
 String defaultTranslation(String key){
   switch(key){
@@ -37,7 +48,6 @@ enum FDTState{
   noData,
   error,
   building,
-  form,
 }
 
 
@@ -67,6 +77,7 @@ enum FDTActionTypes{
   info,
   detail,
   save,
+  openFilter,
   userAction,
   userAction2,
 }

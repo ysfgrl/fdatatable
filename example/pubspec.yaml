@@ -16,7 +16,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  f_json_editor:
+    path: ../../f_json_editor
   fdatatable:
     # When depending on this package from a real application you should use:
     #   fdatatable: ^x.y.z

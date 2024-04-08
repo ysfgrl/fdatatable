@@ -1,59 +1,59 @@
 part of 'fdatatable.dart';
 
-Widget createAction<DType extends Object>(FAction action){
-
-  Widget child;
-  if(action.icon != null && action.text != null) {
-    if(action.axis == FActionAxis.leftToRight){
-      child = Row(
-        children: [
-          action.icon!,
-          const SizedBox(width: 5,),
-          action.text!
-        ],
-      );
-    }else if(action.axis == FActionAxis.rightToLeft){
-      child = Row(
-        children: [
-          action.text!,
-          const SizedBox(width: 5,),
-          action.icon!
-        ],
-      );
-    }else if(action.axis == FActionAxis.topToBottom){
-      child = Column(
-        children: [
-          action.icon!,
-          const SizedBox(height: 5,),
-          action.text!
-        ],
-      );
-    }else{
-      child = Column(
-        children: [
-          action.text!,
-          const SizedBox(height: 5,),
-          action.icon!
-        ],
-      );
-    }
-
-  }else if(action.icon != null){
-    child=action.icon!;
-  }else if(action.text != null){
-    child = action.text!;
-  }else{
-    child = Text("");
-  }
-  if(action.toolTip != null){
-    child = Tooltip(
-      message: action.toolTip,
-      child: child,
-    );
-  }
-  return child;
-
-}
+// Widget createAction<DType extends Object>(FDTAction action){
+//
+//   Widget child;
+//   if(action.icon != null && action.text != null) {
+//     if(action.axis == FActionAxis.leftToRight){
+//       child = Row(
+//         children: [
+//           action.icon!,
+//           const SizedBox(width: 5,),
+//           action.text!
+//         ],
+//       );
+//     }else if(action.axis == FActionAxis.rightToLeft){
+//       child = Row(
+//         children: [
+//           action.text!,
+//           const SizedBox(width: 5,),
+//           action.icon!
+//         ],
+//       );
+//     }else if(action.axis == FActionAxis.topToBottom){
+//       child = Column(
+//         children: [
+//           action.icon!,
+//           const SizedBox(height: 5,),
+//           action.text!
+//         ],
+//       );
+//     }else{
+//       child = Column(
+//         children: [
+//           action.text!,
+//           const SizedBox(height: 5,),
+//           action.icon!
+//         ],
+//       );
+//     }
+//
+//   }else if(action.icon != null){
+//     child=action.icon!;
+//   }else if(action.text != null){
+//     child = action.text!;
+//   }else{
+//     child = Text("");
+//   }
+//   if(action.toolTip != null){
+//     child = Tooltip(
+//       message: action.toolTip,
+//       child: child,
+//     );
+//   }
+//   return child;
+//
+// }
 
 
 class FDTDialog extends StatelessWidget {

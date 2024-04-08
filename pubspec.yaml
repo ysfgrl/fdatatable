@@ -13,8 +13,8 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   provider: any
-  flutter_form_builder: ^9.1.1
-  form_builder_validators: ^9.0.0-dev.1
+  date_field: ^5.0.1
+  expansion_tile_group: ^1.2.4
 
 dev_dependencies:
   flutter_test:

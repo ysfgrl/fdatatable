@@ -42,24 +42,24 @@ class FDTFooter<DType extends Object> extends StatelessWidget{
               children: [
                 Text(translation("fdt.pageSize")),
                 const SizedBox(width: 10),
-                ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 70, maxHeight: 30),
-                    child: DropdownButtonFormField<int>(
-                      value: 10,
-                      decoration: const InputDecoration(
-                          isCollapsed: true,
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 4),
-                          border: OutlineInputBorder()),
-                      style: const TextStyle(fontSize: 14),
-                      onChanged:(value) => state.setPageSize(value!),
-                      items: const [
-                        DropdownMenuItem(value: 10,child: Text("10"),),
-                        DropdownMenuItem(value: 20,child: Text("20"),),
-                        DropdownMenuItem(value: 50,child: Text("50"),),
-                        DropdownMenuItem(value: 100,child: Text("100"),),
-                      ],
-                    )
+                SizedBox(
+                  width: 70,
+                  height: 25,
+                  child: DropdownButtonFormField<int>(
+                    value: state.requestModel.pageSize,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.all(1),
+                      border: const OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(),
+                    ),
+                    onChanged:(value) => state.setPageSize(value!),
+                    items: const [
+                      DropdownMenuItem(value: 10, child: Text("10"),),
+                      DropdownMenuItem(value: 20, child: Text("20"),),
+                      DropdownMenuItem(value: 50,child: Text("50"),),
+                      DropdownMenuItem(value: 100,child: Text("100"),),
+                    ],
+                  ),
                 ),
                 SizedBox(width: 10,),
                 Column(
@@ -99,24 +99,24 @@ class FDTFooter<DType extends Object> extends StatelessWidget{
         children: [
           Text(translation("fdt.pageSize")),
           const SizedBox(width: 5),
-          ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 70,),
-              child: DropdownButtonFormField<int>(
-                value: state.requestModel.pageSize,
-                decoration: const InputDecoration(
-                    isCollapsed: true,
-                    contentPadding: EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 8),
-                    ),
-                style: const TextStyle(fontSize: 14),
-                onChanged:(value) => state.setPageSize(value!),
-                items: const [
-                  DropdownMenuItem(value: 10, child: Text("10"),),
-                  DropdownMenuItem(value: 20, child: Text("20"),),
-                  DropdownMenuItem(value: 50,child: Text("50"),),
-                  DropdownMenuItem(value: 100,child: Text("100"),),
-                ],
-              )
+          SizedBox(
+            width: 70,
+            height: 25,
+            child: DropdownButtonFormField<int>(
+              value: state.requestModel.pageSize,
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.all(1),
+                border: const OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(),
+              ),
+              onChanged:(value) => state.setPageSize(value!),
+              items: const [
+                DropdownMenuItem(value: 10, child: Text("10"),),
+                DropdownMenuItem(value: 20, child: Text("20"),),
+                DropdownMenuItem(value: 50,child: Text("50"),),
+                DropdownMenuItem(value: 100,child: Text("100"),),
+              ],
+            ),
           ),
           const SizedBox(width: 5,),
           Text("${translation("fdt.pageNumber")} :"),

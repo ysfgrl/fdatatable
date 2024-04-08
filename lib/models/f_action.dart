@@ -1,25 +1,14 @@
 
 part of '../fdatatable.dart';
 
-enum FActionAxis{
-  leftToRight,
-  topToBottom,
-  rightToLeft,
-  bottomToTop
-}
-
-class FAction{
+class FDTAction{
   final FDTActionTypes action;
-  final Text? text;
-  final Icon? icon;
-  final FActionAxis axis;
-  final String? toolTip;
-  FAction({
-    this.text,
+  final String text;
+  final Icon icon;
+  const FDTAction({
+    required this.text,
     required this.action,
-    this.icon,
-    this.toolTip,
-    this.axis = FActionAxis.leftToRight
+    required this.icon,
   });
 }
 

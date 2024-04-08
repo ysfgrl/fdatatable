@@ -28,7 +28,7 @@ class FDTHeader<DType extends Object> extends StatelessWidget{
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(width: 65,),
-        ...state.columns.getRange(0, size).where((element) => element.visible).map((column) {
+        ...state.columns.getRange(0, size).map((column) {
           if(column.columnWidth!=null){
             return SizedBox(
               width: column.columnWidth,

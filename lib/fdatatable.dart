@@ -1,35 +1,32 @@
 library fdatatable;
 
 import 'dart:async';
-import 'dart:math';
 
+import 'package:date_field/date_field.dart';
+import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
-
-
-export 'package:flutter_form_builder/src/fields/form_builder_date_time_picker.dart';
-export 'package:flutter_form_builder/src/form_builder_field_option.dart';
+// import 'package:intl/intl.dart';
+// import 'package:intl/intl_standalone.dart'
+// if (dart.library.html) 'package:intl/intl_browser.dart';
 
 part 'constant.dart';
 part 'ftypes.dart';
 part 'models/f_action.dart';
 part 'models/f_column.dart';
+part 'models/f_filter.dart';
 part 'models/faction_response.dart';
 part 'models/fpage_request.dart';
 part 'models/fpage_response.dart';
 part 'fdatatable_controller.dart';
 part 'fdatatable_notifier.dart';
 part 'fdatatable_rows.dart';
+part 'fdatatable_row.dart';
 part 'fdatatable_header.dart';
 part 'fdatatable_title.dart';
 part 'fdatatable_footer.dart';
-part 'fdatatable_form.dart';
-part 'fdatatable_form_notifier.dart';
-part 'fdatatable_filter_notifier.dart';
+part 'fdatatable_menu.dart';
 
 
 class FDT<DType extends Object> extends StatelessWidget {
@@ -38,14 +35,15 @@ class FDT<DType extends Object> extends StatelessWidget {
   final FDTRowLoading? fdtRowLoading;
   final FActionCallBack<DType> actionCallBack;
   final FDTTranslation translation;
-
-  final List<FDTBaseColumn<DType,dynamic >> columns;
-  final List<FAction> topActions;
-  final List<FAction> rowActions;
+  final List<FDTBaseColumn<DType>> columns;
+  final List<FDTFilter<Object>> filters;
+  final List<FDTAction> topActions;
+  final List<FDTAction> rowActions;
   final Text? title;
   final Icon? icon;
   final int firstPage;
   final int pageSize;
+  final bool showHeader;
   const FDT({
     super.key,
     required this.fdtRequest,
@@ -57,11 +55,12 @@ class FDT<DType extends Object> extends StatelessWidget {
     this.icon,
     this.topActions = const [],
     this.rowActions = const [],
+    this.filters = const [],
     this.translation = defaultTranslation,
     this.firstPage = 1,
-    this.pageSize = 10
+    this.pageSize = 10,
+    this.showHeader = true,
   });
-
   
   @override
   Widget build(BuildContext context) {
@@ -74,21 +73,13 @@ class FDT<DType extends Object> extends StatelessWidget {
         requestModel: FDTRequestModel(
           page: firstPage,
           pageSize: pageSize,
-          filters: {for (var v in columns.where((value) => value.isFilter)) v.key: null}
+          filters: {for (var v in filters) v.key: v.val},
         ),
-        filterState: FDTFilterNotifier<DType>(
-          filters: {for (var v in columns.where((value) => value.isFilter)) v.key: null}
-        ),
-        formState: FDTFormNotifier<DType>()
+        filters: filters
       ),
       builder: (context, child) {
         var state = context.read<FDTNotifier<DType>>();
-        return  Material(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4)),
-              side: BorderSide(color: Color(0xffDADCE0))
-          ),
-          elevation: 10,
+        return  Card(
           child: LayoutBuilder(
             builder: (context, constraints) {
               state.setWidth(constraints.maxWidth);
@@ -97,8 +88,7 @@ class FDT<DType extends Object> extends StatelessWidget {
                 children: [
                   DecoratedBox(
                     decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withAlpha(30),
-                    ),
+                      color: Theme.of(context).primaryColor.withAlpha(30),),
                     child: FDTTitle<DType>(
                       topActions: topActions,
                       title: title,
@@ -106,38 +96,14 @@ class FDT<DType extends Object> extends StatelessWidget {
                       translation: translation,
                     ),
                   ),
-                  // const Divider(height: 1),
-                  // DecoratedBox(
-                  //   decoration: BoxDecoration(
-                  //
-                  //       // boxShadow: const <BoxShadow>[
-                  //       //   BoxShadow(
-                  //       //     blurRadius: 10.0,
-                  //       //     spreadRadius: -10.0,
-                  //       //     offset: Offset(0.0, 10.0),
-                  //       //   )
-                  //       // ],
-                  //
-                  //       color: Theme.of(context).primaryColor.withAlpha(10),
-                  //   ),
-                  //
-                  //   child: FDTHeader<DType>(),
-                  // ),
-
-                  Divider(height: 1,),
-
+                  Divider(height: 1, color: Theme.of(context).dividerColor,),
                   Expanded(
-                    child: Material(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-
-                        ),
-
-                        child: FDTRows<DType>(
-                          rowActions: rowActions,
-                          translation: translation,
-                          rowLoading: fdtRowLoading,
-                        ),
+                    child: Padding(
+                      padding: EdgeInsets.all(1),
+                      child: FDTRows<DType>(
+                        rowActions: rowActions,
+                        translation: translation,
+                        rowLoading: fdtRowLoading,
                       ),
                     ),
                   ),

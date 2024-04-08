@@ -4,28 +4,26 @@ part of 'fdatatable.dart';
 class FDTNotifier<DType extends Object> extends ChangeNotifier{
   final tableKey = GlobalKey();
   final ScrollController rowsScrollController = ScrollController();
-  final List<FDTBaseColumn<DType, dynamic>> columns;
+  final ScrollController rowsScrollController2 = ScrollController();
+  final List<FDTBaseColumn<DType>> columns;
+  final List<FDTFilter<Object>> filters;
   final FDTController<DType> controller;
   final FDTRequest<DType> fdtRequest;
   final FDTRequestModel requestModel;
   final FActionCallBack<DType> actionCallBack;
-
   FDTResponseModel<DType> responseModel = FDTResponseModel.Empty();
   FDTState state = FDTState.loading;
   Object? _error;
-
-  FDTFilterNotifier<DType> filterState;
-  FDTFormNotifier<DType> formState;
-
+  // FDTFilterNotifier filterState;
   FDTNotifier({
     required this.fdtRequest,
     required this.columns,
     required this.actionCallBack,
     required this.requestModel,
     required FDTController<DType>? controller,
-    required this.filterState,
-    required this.formState
-  }): this.controller = controller ?? FDTController() {
+    required this.filters,
+    // required this.filterState,
+  }): this.controller = controller ?? FDTController(){
     _init();
   }
 
@@ -54,7 +52,8 @@ class FDTNotifier<DType extends Object> extends ChangeNotifier{
 
 
   void saveFilter(){
-    requestModel.filters = filterState.filters.map((key, value) => MapEntry(key, value));
+    requestModel.filters = {for (var v in filters) v.key: v.val};
+    // requestModel.filters = filterState.filters.map((key, value) => MapEntry(key, value));
     _getPage();
     isOpenFilter = false;
   }
@@ -91,20 +90,6 @@ class FDTNotifier<DType extends Object> extends ChangeNotifier{
   Future<void> toPage(int page){
     requestModel.page = page;
     return _getPage();
-  }
-
-  void newItem(DType newItem){
-    isOpenFilter = false;
-    formState.updateItem(newItem, -1);
-    state = FDTState.form;
-    notifyListeners();
-  }
-
-  void editItem(int index) async{
-    isOpenFilter = false;
-    formState.updateItem(responseModel.list[index], index);
-    state = FDTState.form;
-    notifyListeners();
   }
 
   DType removeAt(int index){

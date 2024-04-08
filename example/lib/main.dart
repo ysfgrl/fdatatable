@@ -1,5 +1,9 @@
 
+import 'dart:html';
+
+import 'package:f_json_editor/f_json_editor.dart';
 import 'package:fdatatable_example/Model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fdatatable/fdatatable.dart';
 void main() {
@@ -16,86 +20,42 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late FDTController<Model> dataTableController;
-  late List<FDTBaseColumn<Model, dynamic>> columns;
+  late List<FDTBaseColumn<Model>> columns;
+  late List<FDTFilter> filters;
   @override
   void initState() {
     super.initState();
     dataTableController = FDTController();
     columns = [
-      FDTTextColumn<Model>(
-          key: "firstName",
+      FDTBaseColumn<Model>(
           title: "Name",
-          getter: (item) => item.firstName,
-          setter: (item, value) {
-            item.firstName = value;
-            return true;
+          cellBuilder: (item) {
+            return Text(item.firstName);
           },
-          max: 50,
-          min: 5,
-          visible: true,
           columnWidth: 75,
       ),
-      FDTTextColumn<Model>(
-          key: "lastName",
+      FDTBaseColumn<Model>(
           title: "Last Name",
-          getter: (item) => item.lastName,
-          setter: (item, value) {
-            item.lastName = value;
-            return true;
+          cellBuilder: (item) {
+            return Text(item.lastName);
           },
-          max: 50,
-          min: 5,
-          visible: true,
-          columnWidth: 100,
       ),
-      FDTTextColumn<Model>(
-        key: "email",
+      FDTBaseColumn<Model>(
         title: "E-mail",
-        inputType: TextInputType.emailAddress,
-        getter: (item) => item.email,
-        setter: (item, value) {
-          item.email = value;
-          return true;
-        },
         cellBuilder: (item) {
-          return Text("full name");
+          return Text(item.email);
         },
-        max: 50,
-        min: 5,
-        visible: true,
+        columnWidth: 100,
       ),
-      FDTDateColumn<Model>(
-          key: "birthDate",
-          title: "Date",
-          inputType: InputType.date,
-          getter: (item) => item.birthDate,
-          setter: (item, value) {
-            item.birthDate = value;
-            return true;
-          },
-          visible: true,
-          columnWidth: 250,
-      ),
-      FDTLargeTextColumn<Model>(
-          key: "fullName",
+
+      FDTBaseColumn<Model>(
           title: "Full Name",
-          getter: (item) => item.firstName + item.lastName,
-          setter: (item, value) {
-            return true;
+          cellBuilder: (item) {
+            return Text(item.firstName + " "+ item.lastName);
           },
-          minLines: 3,
-          maxLines: 10,
-          maxLength: 500,
-          visible: true
       ),
-      FDTCheckboxColumn<Model>(
-          key: "isActive",
+      FDTBaseColumn<Model>(
           title: "Active",
-          getter: (item) => item.isActive,
-          setter: (item, value) {
-            item.isActive = value;
-            return true;
-          },
           cellBuilder: (item) {
             if(item.isActive){
               return Text("Active", style: TextStyle(color: Colors.green), );
@@ -103,76 +63,131 @@ class _MyAppState extends State<MyApp> {
               return Text("Passive", style: TextStyle(color: Colors.red), );
             }
           },
-          required: true,
           columnWidth: 100,
       ),
-      FDTIntColumn<Model>(
-          key: "age",
+      FDTBaseColumn<Model>(
           title: "Age",
-          getter: (item) => item.age,
-          setter: (item, value) {
-            item.age = value;
-            return true;
+          cellBuilder: (item) {
+            return Text(item.age.toString());
           },
-          min: 0,
-          max: 50,
           columnWidth: 50,
+        isExpand: true,
       ),
-      FDTDropDownColumn<Model, String>(
-          items: const [
-            DropdownMenuItem<String>(
-              value: "Male",
-              child: Text("Male"),
-            ),
-            DropdownMenuItem<String>(
-              value: "FaMale",
-              child: Text("FaMale"),
-            )
-          ],
-          key: "gender",
+
+      FDTBaseColumn<Model>(
           title: "Gender",
-          getter: (item) => item.gender,
-          setter: (item, value) {
-            item.gender = value;
-            return true;
+          cellBuilder: (item) {
+            return Text(item.gender);
           },
       ),
-      FDTRadioGroupColumn<Model, int>(
-          items: const [
-            FormBuilderFieldOption<int>(
-              value: 1,
-              child: Text("Super Admin"),
+      FDTBaseColumn<Model>(
+          title: "User Type",
+          cellBuilder: (item) {
+            if(item.userType == 1){
+              return Row(
+                children: [
+                  Icon(Icons.add_moderator_outlined, color: Colors.red,),
+                  Text("SuperAdmin")
+                ],
+              );
+            }
+            else{
+              return Row(
+                children: [
+                  Icon(CupertinoIcons.textformat_size, color: Colors.red,),
+                  Text("Guest")
+                ],
+              );
+            }
+          },
+      ),
+      FDTBaseColumn<Model>(
+        isExpand: true,
+          title: "Detail",
+          cellBuilder: (item) {
+            return Text(item.detail);
+          }
+      ),
+      FDTBaseColumn<Model>(
+        title: "Date",
+        isExpand: true,
+        cellBuilder: (item) {
+          return SizedBox(
+            height: 200,
+            child: FJSONEditor(
+              showHeader: true,
+              isEditable: false,
+              jsonData: {
+                "key1":"val1",
+                "key2":2,
+                "key3":["ff", "ff"]
+              },
+              actionCallback: (actionKey, jsonData) {
+
+              },
             ),
-            FormBuilderFieldOption<int>(
-              value: 2,
+          );
+        },
+        columnWidth: 250,
+      ),
+    ];
+    filters =  [
+      FDTTextFilter(
+        key: "name",
+        val: "defaultName",
+        decoration: InputDecoration(
+          labelText: "fieldName",
+          contentPadding: EdgeInsets.all(1),
+          border: const OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(),
+        ),
+      ),
+      FDTIntFilter(key: "intkey", val: 1,
+          decoration: InputDecoration(
+            labelText: "fieldName",
+            contentPadding: EdgeInsets.all(1),
+            border: const OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(),
+          )
+      ),
+      FDTCheckboxFilter(
+          val: true,
+          key: "aktive",
+          decoration: InputDecoration(
+            labelText: "fieldName",
+            contentPadding: EdgeInsets.all(1),
+            border: const OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(),
+          )
+
+      ),
+
+      FDTDropDownFilter<String>(key: "drop",
+          val: "admin",
+          items: [
+            DropdownMenuItem<String>(
+              value: "admin",
               child: Text("Admin"),
             ),
-            FormBuilderFieldOption<int>(
-              value: 3,
-              child: Text("Guest"),
+
+            DropdownMenuItem<String>(
+              value: "superadmin",
+              child: Text("SuperAdmin"),
             )
           ],
-          key: "userType",
-          title: "User Type",
-          getter: (item) => item.userType,
-          visible: false,
-          setter: (item, value) {
-            item.userType = value;
-            return true;
-          },
+          decoration: InputDecoration(
+            labelText: "fieldName",
+            contentPadding: EdgeInsets.all(1),
+            border: const OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(),
+          )
       ),
-      FDTLargeTextColumn<Model>(
-          key: "detail",
-          title: "Detail",
-          getter: (item) => item.detail,
-          setter: (item, value) {
-            item.detail = value;
-            return true;
-          },
-          minLines: 3,
-          maxLines: 10,
-          maxLength: 500
-      ),
+      FDTDateFilter(val: DateTime.now().toIso8601String(), key: "date", decoration: InputDecoration(
+        labelText: "fieldName",
+        contentPadding: EdgeInsets.all(1),
+        border: const OutlineInputBorder(),
+        focusedBorder: OutlineInputBorder(),
+      ))
     ];
   }
 
@@ -180,16 +195,17 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       themeMode: ThemeMode.light,
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData.dark(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(
           title: const Text('FDataTable example app'),
         ),
         body: Container(
           child: Padding(
-            padding: EdgeInsets.all(2),
+            padding: EdgeInsets.all(20),
             child: Center(
               child: FDT<Model>(
+
                 title: Text("User list Table"),
                 fdtRequest: (requestModel) async {
                   await Future.delayed(Duration(seconds: 2));
@@ -204,63 +220,39 @@ class _MyAppState extends State<MyApp> {
                 },
                 controller: dataTableController,
                 columns: columns,
+                filters: filters,
                 actionCallBack: (action) {
                   switch(action.action){
-                    case FDTActionTypes.remove:
                     case FDTActionTypes.delete:
                       dataTableController.removeAt(action.index);
                     case FDTActionTypes.refresh:
                       dataTableController.refreshPage();
-                    case FDTActionTypes.edit:
-                      dataTableController.editItem(action.index!);
                     case FDTActionTypes.toPage:
                       dataTableController.toPage(10);
                     case FDTActionTypes.add:
-                      dataTableController.newItem(Model(
-                          firstName: "",
-                          lastName: "",
-                          email: "",
-                          age: 1,
-                          isActive: false,
-                          gender: "Male",
-                          id: "testid",
-                          birthDate: DateTime.now(),
-                          detail: "",
-                          userType: 2
-                      ));
-                    case FDTActionTypes.save:
-                      print(action.item!.firstName);
-                      print(action.item!.lastName);
-                      print(action.item!.email);
-                      print(action.item!.gender);
-                      print(action.item!.birthDate);
-
-                    case FDTActionTypes.newForm:
-                    case FDTActionTypes.next:
-                    case FDTActionTypes.previous:
-                    case FDTActionTypes.info:
-                    case FDTActionTypes.detail:
-                    case FDTActionTypes.userAction:
-                    case FDTActionTypes.userAction2:
-                      print("not found action");
+                    default:
+                      break;
                   }
                 },
-                fdtRowLoading: (rowIndex) {
-                  return Text(rowIndex.toString()+"-)");
-                },
-                topActions: [
-
-                  FAction(text: Text("New"), toolTip: "Add", action: FDTActionTypes.add, icon: Icon(Icons.plus_one_outlined, size: 20, color: Colors.blue,)),
-                  FAction(text: Text("Refresh"), action: FDTActionTypes.refresh, icon: Icon(Icons.refresh_outlined, size: 20,)),
-                  FAction(text: Text("To Page 10"), action: FDTActionTypes.toPage, icon: Icon(Icons.arrow_circle_right_outlined, size: 20,)),
+                // fdtRowLoading: (item, rowIndex) {
+                //   // return Text(rowIndex.toString()+"-)");
+                //   return CircleAvatar(
+                //     radius: 20,
+                //     child: Text(rowIndex.toString()+"-)"),
+                //   );
+                // },
+                topActions: const [
+                  FDTAction(text: "New",  action: FDTActionTypes.add, icon: Icon(Icons.plus_one_outlined, color: Colors.blue,)),
+                  FDTAction(text: "Refresh", action: FDTActionTypes.refresh, icon: Icon(Icons.refresh_outlined,)),
+                  FDTAction(text: "To Page 10", action: FDTActionTypes.toPage, icon: Icon(Icons.arrow_circle_right_outlined,)),
                 ],
-                rowActions: [
-                  FAction(toolTip: "Edit", action: FDTActionTypes.edit, icon: Icon(Icons.edit, size: 20,)),
-                  FAction(toolTip: "Delete", action: FDTActionTypes.delete,
-                      icon: Icon(Icons.delete_forever, color: Colors.red, size: 20,)
+                rowActions: const [
+                  FDTAction(text: "Edit", action: FDTActionTypes.edit, icon: Icon(Icons.edit,)),
+                  FDTAction(text: "Delete", action: FDTActionTypes.delete,
+                      icon: Icon(Icons.delete_forever, color: Colors.red,)
                   ),
-                  FAction(toolTip: "İnfo", action: FDTActionTypes.info,
-                      icon: Icon(Icons.info, color: Colors.red, size: 20,)
+                  FDTAction(text: "İnfo", action: FDTActionTypes.info,
+                      icon: Icon(Icons.info, color: Colors.red,)
                   )
                 ],
               ),
@@ -283,7 +275,7 @@ class _MyAppState extends State<MyApp> {
           gender: "Male",
           birthDate: DateTime.now(),
           detail: "No detail",
-          userType: 1,
+          userType: index%3,
       );
     },);
   }
