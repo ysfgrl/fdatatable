@@ -1,10 +1,10 @@
 # Flutter Datatable
 
 
-<img src="https://raw.githubusercontent.com/ysfgrl/fdatatable/master/screenshot/Screenshot1.png" alt="drawing" width="200"/>
-<img src="https://raw.githubusercontent.com/ysfgrl/fdatatable/master/screenshot/Screenshot2.png" alt="drawing" width="200"/>
-<img src="https://raw.githubusercontent.com/ysfgrl/fdatatable/master/screenshot/Screenshot3.png" alt="drawing" width="200"/>
-<img src="https://raw.githubusercontent.com/ysfgrl/fdatatable/master/screenshot/Screenshot4.png" alt="drawing" width="200"/>
+<img src="https://raw.githubusercontent.com/ysfgrl/fdatatable/master/screenshots/Screenshot1.png" alt="drawing" width="200"/>
+<img src="https://raw.githubusercontent.com/ysfgrl/fdatatable/master/screenshots/Screenshot2.png" alt="drawing" width="200"/>
+<img src="https://raw.githubusercontent.com/ysfgrl/fdatatable/master/screenshots/Screenshot3.png" alt="drawing" width="200"/>
+<img src="https://raw.githubusercontent.com/ysfgrl/fdatatable/master/screenshots/Screenshot4.png" alt="drawing" width="200"/>
 
 ## Features
 
