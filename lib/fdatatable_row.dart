@@ -6,11 +6,13 @@ class FDTRow<DType extends Object> extends StatefulWidget {
   final int index;
   final List<FDTAction> rowActions;
   final FDTRowLoading<DType>? rowLoading;
+  final bool expandableRow;
   const FDTRow({
     super.key,
     required this.tableState,
     required this.index,
     required this.rowActions,
+    required this.expandableRow,
     this.rowLoading
   });
   @override
@@ -46,7 +48,7 @@ class _FDTRowState<DType extends Object> extends State<FDTRow<DType>> with Ticke
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         _buildTitle(context),
-
+        if(widget.expandableRow)
         _buildBody(context)
       ],
     );
@@ -81,6 +83,7 @@ class _FDTRowState<DType extends Object> extends State<FDTRow<DType>> with Ticke
               ),
             ),
           ),
+          if(widget.expandableRow)
           IconButton(
               onPressed: () {
                 _isExpanded = !_isExpanded;
@@ -93,6 +96,8 @@ class _FDTRowState<DType extends Object> extends State<FDTRow<DType>> with Ticke
 
                 });
               },
+              padding: EdgeInsets.all(3),
+              constraints: BoxConstraints(),
               icon: _isExpanded ? Icon(Icons.keyboard_arrow_down_rounded) : Icon(Icons.keyboard_arrow_right_outlined)
           ),
           Visibility(

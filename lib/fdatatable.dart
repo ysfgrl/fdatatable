@@ -43,6 +43,7 @@ class FDT<DType extends Object> extends StatelessWidget {
   final int firstPage;
   final int pageSize;
   final bool showHeader;
+  final bool expandableRow;
   const FDT({
     super.key,
     required this.fdtRequest,
@@ -59,6 +60,7 @@ class FDT<DType extends Object> extends StatelessWidget {
     this.firstPage = 1,
     this.pageSize = 10,
     this.showHeader = true,
+    this.expandableRow = true,
   });
   
   @override
@@ -103,6 +105,7 @@ class FDT<DType extends Object> extends StatelessWidget {
                         rowActions: rowActions,
                         translation: translation,
                         rowLoading: fdtRowLoading,
+                        expandableRow: expandableRow,
                       ),
                     ),
                   ),

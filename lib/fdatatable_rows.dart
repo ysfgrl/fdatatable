@@ -5,9 +5,11 @@ class FDTRows<DType extends Object> extends StatelessWidget{
   final List<FDTAction> rowActions;
   final FDTRowLoading<DType>? rowLoading;
   final FDTTranslation translation;
+  final bool expandableRow;
   const FDTRows({super.key,
     required this.rowActions,
     required this.translation,
+    required this.expandableRow,
     this.rowLoading,
   });
 
@@ -38,7 +40,13 @@ class FDTRows<DType extends Object> extends StatelessWidget{
               itemBuilder:(context, index) => AnimatedBuilder(
                 animation: state.rowsScrollController,
                 builder: (context, child){
-                  return FDTRow<DType>(tableState: state, index: index, rowActions: rowActions,rowLoading: rowLoading,);
+                  return FDTRow<DType>(
+                    tableState: state,
+                    index: index,
+                    rowActions: rowActions,
+                    rowLoading: rowLoading,
+                    expandableRow: expandableRow,
+                  );
                   // switch(state.size){
                   //   case FDTSize.sm: return FDTRow(tableState: state, index: index);
                   //   case FDTSize.md: return FDTRow(tableState: state, index: index);

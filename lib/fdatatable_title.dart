@@ -76,7 +76,8 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
               visible: state.filters.isNotEmpty,
               child: IconButton(
                   tooltip: "Filter",
-                  splashRadius: 30,
+                  padding: EdgeInsets.all(3),
+                  constraints: BoxConstraints(),
                   onPressed: () {
                     state.openFilter(!state.isOpenFilter);
                   },
@@ -165,6 +166,8 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
             child:  IconButton(
                 onPressed: () => tableState.actionCallBack(FActionResponse<DType>(action: action.action)),
                 icon: action.icon,
+                padding: EdgeInsets.all(3),
+                constraints: BoxConstraints(),
                 tooltip: action.text,
             ),
           )).toList(),

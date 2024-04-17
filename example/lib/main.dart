@@ -194,7 +194,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       darkTheme: ThemeData.dark(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(
@@ -220,6 +220,8 @@ class _MyAppState extends State<MyApp> {
                 controller: dataTableController,
                 columns: columns,
                 filters: filters,
+                showHeader: false,
+                expandableRow: true,
                 actionCallBack: (action) {
                   switch(action.action){
                     case FDTActionTypes.delete:
