@@ -164,17 +164,19 @@ class _MyAppState extends State<MyApp> {
 
       FDTDropDownFilter<String>(key: "drop",
           val: "admin",
-          items: [
-            DropdownMenuItem<String>(
-              value: "admin",
-              child: Text("Admin"),
-            ),
+          itemBuilder: () {
+            return [
+              DropdownMenuItem<String>(
+                value: "admin",
+                child: Text("Admin2"),
+              ),
 
-            DropdownMenuItem<String>(
-              value: "superadmin",
-              child: Text("SuperAdmin"),
-            )
-          ],
+              DropdownMenuItem<String>(
+                value: "superadmin2",
+                child: Text("SuperAdmin"),
+              )
+            ];
+          },
           decoration: InputDecoration(
             labelText: "fieldName",
             contentPadding: EdgeInsets.all(1),
@@ -242,11 +244,11 @@ class _MyAppState extends State<MyApp> {
                 //     child: Text(rowIndex.toString()+"-)"),
                 //   );
                 // },
-                topActions: const [
-                  FDTAction(text: "New",  action: FDTActionTypes.add, icon: Icon(Icons.plus_one_outlined, color: Colors.blue,)),
-                  FDTAction(text: "Refresh", action: FDTActionTypes.refresh, icon: Icon(Icons.refresh_outlined,)),
-                  FDTAction(text: "To Page 10", action: FDTActionTypes.toPage, icon: Icon(Icons.arrow_circle_right_outlined,)),
-                ],
+                // topActions: const [
+                //   FDTAction(text: "New",  action: FDTActionTypes.add, icon: Icon(Icons.plus_one_outlined, color: Colors.blue,)),
+                //   FDTAction(text: "Refresh", action: FDTActionTypes.refresh, icon: Icon(Icons.refresh_outlined,)),
+                //   FDTAction(text: "To Page 10", action: FDTActionTypes.toPage, icon: Icon(Icons.arrow_circle_right_outlined,)),
+                // ],
                 rowActions: const [
                   FDTAction(text: "Edit", action: FDTActionTypes.edit, icon: Icon(Icons.edit,)),
                   FDTAction(text: "Delete", action: FDTActionTypes.delete,

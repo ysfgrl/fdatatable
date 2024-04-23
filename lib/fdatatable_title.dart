@@ -22,32 +22,29 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
         return Column(
           children: [
             _titleWidget(context, tableState),
-            Visibility(
-              visible: tableState.isOpenFilter && tableState.filters.isNotEmpty,
-              child: _filterWidget(context, tableState),
-            ),
-            Visibility(
-              visible: tableState.isOpenFilter && tableState.filters.isNotEmpty,
-              child: const Divider(),
-            ),
-            Visibility(
-              visible: tableState.isOpenFilter && tableState.filters.isNotEmpty,
-              child: Row(
-                mainAxisAlignment:  MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 5, right: 5),
-                    child: OutlinedButton(
-                        onPressed: () =>
-                        {
-                          tableState.saveFilter()
-                        },
-                        child: Text(translation("fdt.filterBtn"))
-                    ),
-                  ),
-                ],
-              ) ,
-            )
+            if(tableState.isOpenFilter && tableState.filters.isNotEmpty)
+              ...[
+                _filterWidget(context, tableState),
+                const Divider(),
+                Visibility(
+                  visible: tableState.isOpenFilter && tableState.filters.isNotEmpty,
+                  child: Row(
+                    mainAxisAlignment:  MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 5, right: 5),
+                        child: OutlinedButton(
+                            onPressed: () =>
+                            {
+                              tableState.saveFilter()
+                            },
+                            child: Text(translation("fdt.filterBtn"))
+                        ),
+                      ),
+                    ],
+                  ) ,
+                )
+              ],
           ],
         );
       },
@@ -72,9 +69,8 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
                   ],
                 )
             ),
-            Visibility(
-              visible: state.filters.isNotEmpty,
-              child: IconButton(
+            if(state.filters.isNotEmpty)
+              IconButton(
                   tooltip: "Filter",
                   padding: EdgeInsets.all(3),
                   constraints: BoxConstraints(),
@@ -83,9 +79,8 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
                   },
                   icon: Icon(Icons.filter_alt_outlined)
               ),
-            ),
-            _actions(state),
-
+            if(topActions.isNotEmpty)
+              _actions(state),
           ],
         ),
       ),

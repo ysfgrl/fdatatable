@@ -6,11 +6,13 @@ typedef FDTRequest<DType extends Object> = FutureOr<FDTResponseModel<DType>> Fun
 
 typedef FActionCallBack<DType extends Object> = void Function(FActionResponse<DType> action);
 typedef FDTTranslation = String Function(String key);
+
 typedef FDTRowLoading<DType extends Object> = Widget Function(DType item, int rowIndex);
 
 typedef FDTItemCreator<DType extends Object> = DType Function();
 
 typedef FDTCellBuild<DType extends Object> = Widget Function(DType item);
+typedef FDTDropDownItemBuild<DType extends Object> = List<DropdownMenuItem<DType>> Function();
 
 typedef Getter<DType extends Object, VType> = VType Function(DType item);
 typedef Setter<DType extends Object, VType> = FutureOr<bool> Function(DType item, VType value);

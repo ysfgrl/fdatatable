@@ -91,7 +91,6 @@ class _CheckboxFormField extends State<CheckboxFormField>{
   late bool val;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     val = widget.val;
   }
@@ -136,20 +135,22 @@ class FDTCheckboxFilter extends FDTFilter<bool>{
   }
 }
 class FDTDropDownFilter<VType extends Object> extends FDTFilter<VType>{
-  final List<DropdownMenuItem<VType>> items;
+  late List<DropdownMenuItem<VType>> items;
+  final FDTDropDownItemBuild<VType>? itemBuilder;
   FDTDropDownFilter({
     required super.key,
     required super.val,
     super.textStyle,
     super.decoration,
-    required this.items,
-  });
-
+    this.items = const [],
+    this.itemBuilder,
+  }): assert(items.isNotEmpty || itemBuilder != null);
+  
   @override
   Widget filterBuild(BuildContext context) {
     return DropdownButtonFormField<VType>(
         value: val,
-        items: items,
+        items: getItems(),
         onChanged: (value) {
           if(value == null) return;
           val = value;
@@ -157,7 +158,13 @@ class FDTDropDownFilter<VType extends Object> extends FDTFilter<VType>{
         decoration: decoration,
     );
   }
+  List<DropdownMenuItem<VType>> getItems(){
+    if(items.isEmpty && itemBuilder != null) items = itemBuilder!();
+    return items;
+  }
+  
 }
+
 
 
 class DateTimeFormField extends StatefulWidget {

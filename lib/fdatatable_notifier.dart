@@ -79,7 +79,10 @@ class FDTNotifier<DType extends Object> extends ChangeNotifier{
   }
 
   Future<void> previousPage(){
-    requestModel.page = responseModel.page-1;
+    if(requestModel.page == 1){
+      return refreshPage();
+    }
+    requestModel.page = responseModel.page - 1;
     return _getPage();
   }
   Future<void> refreshPage(){
