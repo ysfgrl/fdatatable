@@ -26,23 +26,30 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
               ...[
                 _filterWidget(context, tableState),
                 const Divider(),
-                Visibility(
-                  visible: tableState.isOpenFilter && tableState.filters.isNotEmpty,
-                  child: Row(
-                    mainAxisAlignment:  MainAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 5, right: 5),
-                        child: OutlinedButton(
-                            onPressed: () =>
-                            {
-                              tableState.saveFilter()
-                            },
-                            child: Text(translation("fdt.filterBtn"))
-                        ),
+                Row(
+                  mainAxisAlignment:  MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5, right: 5),
+                      child: OutlinedButton(
+                          onPressed: () =>
+                          {
+                            tableState.clearFilter()
+                          },
+                          child: Text(translation("fdt.filterClearBtn"))
                       ),
-                    ],
-                  ) ,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5, right: 5),
+                      child: OutlinedButton(
+                          onPressed: () =>
+                          {
+                            tableState.saveFilter()
+                          },
+                          child: Text(translation("fdt.filterBtn"))
+                      ),
+                    ),
+                  ],
                 )
               ],
           ],
@@ -85,23 +92,6 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
         ),
       ),
     );
-    // return Padding(
-    //   padding: const EdgeInsets.all(10),
-    //   child: Row(
-    //     children: [
-    //       Row(
-    //         children: [
-    //           icon==null ? const Icon(Icons.table_chart_outlined) : icon!,
-    //           const SizedBox(width: 5,),
-    //           title==null ? const Text("") : title!
-    //         ],
-    //       ),
-    //       Expanded(
-    //         child: _actions(state)
-    //       )
-    //     ],
-    //   ),
-    // );
   }
   Widget _filterWidget(BuildContext context, FDTNotifier<DType> tableState){
 
@@ -136,7 +126,6 @@ class FDTTitle<DType extends Object> extends StatelessWidget{
                       // ),
                       gridDelegate:  _getCrossAxisCount(tableState),
                     )
-
                 )
               ],
             )

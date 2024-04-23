@@ -134,7 +134,6 @@ class _MyAppState extends State<MyApp> {
     filters =  [
       FDTTextFilter(
         key: "name",
-        val: "defaultName",
         decoration: InputDecoration(
           labelText: "fieldName",
           contentPadding: EdgeInsets.all(1),
@@ -142,7 +141,8 @@ class _MyAppState extends State<MyApp> {
           focusedBorder: OutlineInputBorder(),
         ),
       ),
-      FDTIntFilter(key: "intkey", val: 1,
+      FDTIntFilter(
+          key: "intkey",
           decoration: InputDecoration(
             labelText: "fieldName",
             contentPadding: EdgeInsets.all(1),
@@ -151,7 +151,6 @@ class _MyAppState extends State<MyApp> {
           )
       ),
       FDTCheckboxFilter(
-          val: true,
           key: "aktive",
           decoration: InputDecoration(
             labelText: "fieldName",
@@ -162,9 +161,11 @@ class _MyAppState extends State<MyApp> {
 
       ),
 
-      FDTDropDownFilter<String>(key: "drop",
-          val: "admin",
-          itemBuilder: () {
+      FDTDropDownFilter<String>(
+          key: "drop",
+          itemBuilder: () async{
+        debugPrint("get items");
+            await Future.delayed(Duration(seconds: 1));
             return [
               DropdownMenuItem<String>(
                 value: "admin",
@@ -184,7 +185,9 @@ class _MyAppState extends State<MyApp> {
             focusedBorder: OutlineInputBorder(),
           )
       ),
-      FDTDateFilter(val: DateTime.now().toIso8601String(), key: "date", decoration: InputDecoration(
+      FDTDateFilter(
+          key: "date",
+          decoration: InputDecoration(
         labelText: "fieldName",
         contentPadding: EdgeInsets.all(1),
         border: const OutlineInputBorder(),

@@ -5,12 +5,12 @@ part of '../fdatatable.dart';
 
 abstract class FDTFilter<FType extends Object>{
   final String key;
-  late FType val;
+  late FType? val;
   final InputDecoration decoration;
   final TextStyle? textStyle;
   FDTFilter({
     required this.key,
-    required this.val,
+    this.val,
     this.decoration = const InputDecoration(),
     this.textStyle
   });
@@ -20,7 +20,7 @@ abstract class FDTFilter<FType extends Object>{
 class FDTTextFilter extends FDTFilter<String>{
   FDTTextFilter({
     required super.key,
-    required super.val,
+    super.val,
     super.textStyle,
     super.decoration
   });
@@ -43,7 +43,7 @@ class FDTIntFilter extends FDTFilter<int>{
   final int max;
   FDTIntFilter({
     required super.key,
-    required super.val,
+    super.val,
     super.textStyle,
     super.decoration,
     this.min = 0,
@@ -53,7 +53,7 @@ class FDTIntFilter extends FDTFilter<int>{
   @override
   Widget filterBuild(BuildContext context) {
     return TextFormField(
-      initialValue: val.toString(),
+      initialValue: val?.toString(),
       onChanged: (value) {
         val = int.parse(value);
       },
@@ -117,7 +117,7 @@ class _CheckboxFormField extends State<CheckboxFormField>{
 class FDTCheckboxFilter extends FDTFilter<bool>{
 
   FDTCheckboxFilter({
-    required super.val,
+    super.val,
     required super.key,
     super.decoration,
   });
@@ -126,20 +126,81 @@ class FDTCheckboxFilter extends FDTFilter<bool>{
   Widget filterBuild(BuildContext context) {
     return CheckboxFormField(
       decoration: decoration,
-        val: val,
+        val: val==null ? false : val!,
         inputKey: key,
-        onChanged: (value) {
-          val = value;
-        }
+        onChanged: (value) => val = value
     );
   }
 }
+
+class DropDownFormField<VType extends Object> extends StatefulWidget {
+
+  final VType? val;
+  late List<DropdownMenuItem<VType>> items;
+  final InputDecoration decoration;
+  final ValueChanged<VType?> onChanged;
+  final FDTDropDownItemBuild<VType>? itemBuilder;
+  final FDTDropDownSetItems<VType> setItems;
+  DropDownFormField({
+    super.key,
+    required this.val,
+    required this.items,
+    required this.decoration,
+    required this.onChanged,
+    required this.setItems,
+    this.itemBuilder
+  });
+  @override
+  State<StatefulWidget> createState() => _DropDownFormField<VType>();
+}
+
+
+
+class _DropDownFormField<VType extends Object> extends State<DropDownFormField<VType>>{
+  late VType? val;
+  late List<DropdownMenuItem<VType>> items;
+  @override
+  void initState(){
+    super.initState();
+    val = widget.val;
+    items = widget.items;
+  }
+
+  @override
+  void didChangeDependencies() async{
+    super.didChangeDependencies();
+    if(items.isEmpty && widget.itemBuilder != null){
+      items = await widget.itemBuilder!();
+      widget.setItems(items);
+      setState(() {
+
+      });
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<VType>(
+      value: val,
+      items: items,
+      onChanged: (value) {
+        val = value;
+        widget.onChanged(val);
+      },
+      decoration: widget.decoration,
+    );
+  }
+}
+
+
+
 class FDTDropDownFilter<VType extends Object> extends FDTFilter<VType>{
   late List<DropdownMenuItem<VType>> items;
   final FDTDropDownItemBuild<VType>? itemBuilder;
   FDTDropDownFilter({
     required super.key,
-    required super.val,
+    super.val,
     super.textStyle,
     super.decoration,
     this.items = const [],
@@ -148,21 +209,15 @@ class FDTDropDownFilter<VType extends Object> extends FDTFilter<VType>{
   
   @override
   Widget filterBuild(BuildContext context) {
-    return DropdownButtonFormField<VType>(
-        value: val,
-        items: getItems(),
-        onChanged: (value) {
-          if(value == null) return;
-          val = value;
-        },
+    return DropDownFormField<VType>(
+        val: val,
+        items: items,
+        onChanged: (value) => val = value,
         decoration: decoration,
+        itemBuilder: itemBuilder,
+        setItems: (items) => this.items = items,
     );
   }
-  List<DropdownMenuItem<VType>> getItems(){
-    if(items.isEmpty && itemBuilder != null) items = itemBuilder!();
-    return items;
-  }
-  
 }
 
 
@@ -213,7 +268,7 @@ class FDTDateFilter extends FDTFilter<String>{
   final FDTDateToStr dateToStr;
   final FDTStrToDate strToDate;
   FDTDateFilter({
-    required super.val,
+    super.val,
     required super.key,
     super.textStyle,
     super.decoration,
@@ -228,7 +283,7 @@ class FDTDateFilter extends FDTFilter<String>{
         val = dateToStr(value);
       },
       decoration: decoration,
-      val: strToDate(val),
+      val: val == null ? DateTime.now() : strToDate(val!),
     );
   }
 }

@@ -74,7 +74,7 @@ class FDT<DType extends Object> extends StatelessWidget {
         requestModel: FDTRequestModel(
           page: firstPage,
           pageSize: pageSize,
-          filters: {for (var v in filters) v.key: v.val},
+          filters: {for (var v in filters) if(v.val!=null) v.key: v.val},
         ),
         filters: filters
       ),

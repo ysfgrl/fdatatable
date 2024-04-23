@@ -50,8 +50,16 @@ class FDTNotifier<DType extends Object> extends ChangeNotifier{
 
 
   void saveFilter(){
-    requestModel.filters = {for (var v in filters) v.key: v.val};
-    // requestModel.filters = filterState.filters.map((key, value) => MapEntry(key, value));
+    requestModel.filters = {for (var v in filters) if(v.val!=null)v.key: v.val};
+    _getPage();
+    isOpenFilter = false;
+  }
+
+  void clearFilter(){
+    requestModel.filters.clear();
+    for(var filter in filters){
+      filter.val = null;
+    }
     _getPage();
     isOpenFilter = false;
   }
@@ -117,7 +125,6 @@ class FDTNotifier<DType extends Object> extends ChangeNotifier{
       state = FDTState.building;
       notifyListeners();
     }  catch (err, stack) {
-      debugPrint(stack.toString());
       state = FDTState.error;
       notifyListeners();
     }

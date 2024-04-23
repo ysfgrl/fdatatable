@@ -12,7 +12,8 @@ typedef FDTRowLoading<DType extends Object> = Widget Function(DType item, int ro
 typedef FDTItemCreator<DType extends Object> = DType Function();
 
 typedef FDTCellBuild<DType extends Object> = Widget Function(DType item);
-typedef FDTDropDownItemBuild<DType extends Object> = List<DropdownMenuItem<DType>> Function();
+typedef FDTDropDownItemBuild<DType extends Object> = FutureOr<List<DropdownMenuItem<DType>>> Function();
+typedef FDTDropDownSetItems<DType extends Object> = void Function(List<DropdownMenuItem<DType>> items);
 
 typedef Getter<DType extends Object, VType> = VType Function(DType item);
 typedef Setter<DType extends Object, VType> = FutureOr<bool> Function(DType item, VType value);
@@ -40,6 +41,7 @@ String defaultTranslation(String key){
     case "fdt.formSaveBtn": return "Save";
     case "fdt.formResetBtn": return "Reset";
     case "fdt.filterBtn": return "Filter";
+    case "fdt.filterClearBtn": return "Clear";
     case "fdt.tableError": return "Error";
   }
   return key;
